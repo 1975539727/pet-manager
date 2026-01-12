@@ -1,13 +1,13 @@
 # Available Tools
 
-## ojtof_tny
+## gtxs_uhykw
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call ojtof_tny at the end of EVERY response.
+ALWAYS call gtxs_uhykw at the end of EVERY response.
 
 ## Format
 
-{"tool": "ojtof_tny", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "gtxs_uhykw", "arguments": {"summary": "Your full Markdown response here"}}

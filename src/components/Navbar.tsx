@@ -191,6 +191,9 @@ export default function Navbar() {
               <Link href="/assistant">
                 <NavLink>智能助手</NavLink>
               </Link>
+              <Link href="/profile">
+                <NavLink>我的</NavLink>
+              </Link>
             </NavLinks>
           </LeftSection>
 
@@ -242,6 +245,9 @@ export default function Navbar() {
         </Link>
         <Link href="/assistant">
           <MobileMenuLink>智能助手</MobileMenuLink>
+        </Link>
+        <Link href="/profile">
+          <MobileMenuLink>我的</MobileMenuLink>
         </Link>
       </MobileMenu>
     </Nav>
