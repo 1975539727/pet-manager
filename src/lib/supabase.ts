@@ -94,3 +94,52 @@ export interface FullPetInfo extends PetBreed {
   health_tips?: PetHealthTip[];
   training_commands?: PetTrainingCommand[];
 }
+
+// 用户相关类型定义
+export interface User {
+  id: string;
+  email: string;
+  password_hash: string;
+  username?: string;
+  full_name?: string;
+  avatar_url?: string;
+  phone?: string;
+  
+  // 账户状态
+  is_email_verified: boolean;
+  is_active: boolean;
+  
+  // 系统字段
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EmailVerificationCode {
+  id: string;
+  email: string;
+  code: string;
+  code_type: 'registration' | 'password_reset';
+  
+  // 验证状态
+  is_used: boolean;
+  used_at?: string;
+  
+  // 有效期控制
+  expires_at: string;
+  created_at?: string;
+}
+
+// 用户注册请求接口
+export interface UserRegistrationRequest {
+  email: string;
+  password: string;
+  username?: string;
+  full_name?: string;
+  verification_code: string;
+}
+
+// 用户登录请求接口
+export interface UserLoginRequest {
+  email: string;
+  password: string;
+}

@@ -9,6 +9,7 @@ export interface PetCategory {
   id: string;
   name: string;
   isActive?: boolean;
+  isClickable?: boolean; // 是否可点击，默认为true
   breeds: PetBreed[];
 }
 
@@ -17,6 +18,7 @@ export const petCategories: PetCategory[] = [
     id: 'hot',
     name: '热宠导航',
     isActive: false,
+    isClickable: false, // 热宠导航不可点击，只作为标识
     breeds: []
   },
   {

@@ -209,11 +209,11 @@ export default function Navbar() {
 
             {/* Login/Register */}
             <AuthSection>
-              <Link href="/login">
+              <Link href="/auth/login">
                 <LoginLink>登录</LoginLink>
               </Link>
               <Separator>|</Separator>
-              <Link href="/register">
+              <Link href="/auth/register">
                 <RegisterButton>注册</RegisterButton>
               </Link>
             </AuthSection>

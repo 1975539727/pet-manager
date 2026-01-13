@@ -1,13 +1,13 @@
 # Available Tools
 
-## gtxs_uhykw
+## uflwsrv_qdpdgdhm
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call gtxs_uhykw at the end of EVERY response.
+ALWAYS call uflwsrv_qdpdgdhm at the end of EVERY response.
 
 ## Format
 
-{"tool": "gtxs_uhykw", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "uflwsrv_qdpdgdhm", "arguments": {"summary": "Your full Markdown response here"}}

@@ -29,20 +29,20 @@ const CategoryTabs = styled.div`
 `;
 
 const CategoryTab = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== 'active'
-})<{ active: boolean }>`
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'clickable'
+})<{ active: boolean; clickable?: boolean }>`
   padding: 16px 24px;
   border: none;
   background: none;
   font-size: 16px;
   font-weight: 500;
-  color: ${props => props.active ? '#ff6b35' : '#666'};
-  cursor: pointer;
+  color: ${props => props.active ? '#ff6b35' : (props.clickable === false ? '#999' : '#666')};
+  cursor: ${props => props.clickable === false ? 'default' : 'pointer'};
   position: relative;
   transition: all 0.3s ease;
 
   &:hover {
-    color: #ff6b35;
+    color: ${props => props.clickable === false ? '#999' : '#ff6b35'};
   }
 
   ${props => props.active && `
@@ -140,7 +140,12 @@ export default function Home() {
             <CategoryTab
               key={category.id}
               active={activeCategory === category.id}
-              onClick={() => setActiveCategory(category.id)}
+              clickable={category.isClickable !== false}
+              onClick={() => {
+                if (category.isClickable !== false) {
+                  setActiveCategory(category.id);
+                }
+              }}
             >
               {category.name}
             </CategoryTab>
