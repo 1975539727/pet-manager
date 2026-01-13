@@ -1,13 +1,13 @@
 # Available Tools
 
-## uflwsrv_qdpdgdhm
+## qvkn_sow
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call uflwsrv_qdpdgdhm at the end of EVERY response.
+ALWAYS call qvkn_sow at the end of EVERY response.
 
 ## Format
 
-{"tool": "uflwsrv_qdpdgdhm", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "qvkn_sow", "arguments": {"summary": "Your full Markdown response here"}}
