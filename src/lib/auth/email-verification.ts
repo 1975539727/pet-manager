@@ -44,7 +44,6 @@ export async function sendVerificationCode(
     const code = generateVerificationCode();
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10分钟有效期
-    console.log(code);
     // 保存验证码到数据库
     const { data: newCode, error: insertError } = await supabase
       .from('email_verification_codes')
@@ -92,7 +91,6 @@ export async function verifyVerificationCode(
       .eq('is_used', false)
       .gt('expires_at', new Date().toISOString())
       .single();
-
     if (findError || !codeData) {
       return { 
         success: false, 

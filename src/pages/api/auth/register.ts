@@ -51,17 +51,22 @@ export default async function handler(
   }
 
   try {
-    // 1. 验证验证码
-    const verificationResult = await verifyVerificationCode(
-      email, 
-      verification_code, 
-      'registration'
-    );
+    // 1. 检查是否有已验证的验证码记录（允许已使用的验证码）
+    const { data: codeData, error: codeError } = await supabase
+      .from('email_verification_codes')
+      .select('*')
+      .eq('email', email)
+      .eq('code', verification_code)
+      .eq('code_type', 'registration')
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
 
-    if (!verificationResult.success) {
+    if (codeError || !codeData) {
       return res.status(400).json({
         success: false,
-        message: verificationResult.message
+        message: '验证码无效或已过期，请重新获取'
       });
     }
 
@@ -136,7 +141,16 @@ export default async function handler(
       });
     }
 
-    // 6. 返回成功结果（不返回敏感信息）
+    // 6. 标记验证码为已使用（防止重复使用）
+    await supabase
+      .from('email_verification_codes')
+      .update({ 
+        is_used: true, 
+        used_at: new Date().toISOString() 
+      })
+      .eq('id', codeData.id);
+
+    // 7. 返回成功结果（不返回敏感信息）
     return res.status(201).json({
       success: true,
       message: '注册成功！',
