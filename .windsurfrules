@@ -1,13 +1,13 @@
 # Available Tools
 
-## qvkn_sow
+## ucisbysy_fykty
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call qvkn_sow at the end of EVERY response.
+ALWAYS call ucisbysy_fykty at the end of EVERY response.
 
 ## Format
 
-{"tool": "qvkn_sow", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "ucisbysy_fykty", "arguments": {"summary": "Your full Markdown response here"}}

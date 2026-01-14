@@ -2,6 +2,8 @@
 
 import styled from 'styled-components';
 import { User, Settings, Heart, FileText, Bell, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const Container = styled.div`
   max-width: 80rem;
@@ -122,7 +124,111 @@ const ActionDescription = styled.p`
   font-size: 0.875rem;
 `;
 
+const AvatarText = styled.div`
+  font-size: 2.5rem;
+  font-weight: 600;
+`;
+
+const LoginPrompt = styled.div`
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb;
+`;
+
+const LoginButton = styled.a`
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #ea580c;
+  color: white;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #c2410c;
+  }
+`;
+
+interface User {
+  id: string;
+  username?: string;
+  full_name?: string;
+  email: string;
+  avatar_url?: string;
+  is_email_verified?: boolean;
+  is_active?: boolean;
+  created_at?: string;
+}
+
 export default function ProfilePage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 从 localStorage 读取用户信息
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Failed to parse user data:', error);
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  const getUserInitial = (name?: string) => {
+    if (!name || name.length === 0) return '?';
+    return name.charAt(0).toUpperCase();
+  };
+
+  const formatJoinDate = (dateString?: string) => {
+    if (!dateString) return '未知';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+    } catch {
+      return '未知';
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <Header>
+          <Title>我的</Title>
+          <Subtitle>加载中...</Subtitle>
+        </Header>
+      </Container>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Container>
+        <Header>
+          <Title>我的</Title>
+          <Subtitle>管理您的个人信息和宠物资料</Subtitle>
+        </Header>
+        <LoginPrompt>
+          <User size={48} color="#ea580c" style={{ margin: '0 auto 1rem' }} />
+          <UserName>您还未登录</UserName>
+          <UserInfo>登录后可以管理您的个人信息和宠物档案</UserInfo>
+          <Link href="/auth/login">
+            <LoginButton>立即登录</LoginButton>
+          </Link>
+        </LoginPrompt>
+      </Container>
+    );
+  }
+
+  const displayName = user.full_name || user.username || '用户';
+
   return (
     <Container>
       <Header>
@@ -133,11 +239,11 @@ export default function ProfilePage() {
       <ProfileSection>
         <ProfileCard>
           <Avatar>
-            <User size={32} />
+            <AvatarText>{getUserInitial(displayName)}</AvatarText>
           </Avatar>
-          <UserName>宠物主人</UserName>
-          <UserInfo>您好，欢迎使用爪爪管家！</UserInfo>
-          <UserInfo>加入时间：2024年1月</UserInfo>
+          <UserName>{displayName}</UserName>
+          <UserInfo>{user.email}</UserInfo>
+          <UserInfo>加入时间：{formatJoinDate(user.created_at)}</UserInfo>
         </ProfileCard>
 
         <div>

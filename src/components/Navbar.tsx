@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search, User, LogOut, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const Nav = styled.nav`
@@ -123,6 +123,108 @@ const RegisterButton = styled.span`
   }
 `;
 
+const UserSection = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const UserAvatar = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const UserName = styled.span`
+  color: #374151;
+  font-weight: 500;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const DropdownMenu = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 50;
+  opacity: ${props => props.$isOpen ? '1' : '0'};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+  transition: all 0.2s;
+`;
+
+const MenuItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:first-child {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+const WelcomeText = styled.span`
+  color: #374151;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 const SearchBarContainer = styled.div`
   padding-bottom: 1rem;
 `;
@@ -161,8 +263,63 @@ const MobileMenuLink = styled.span`
   }
 `;
 
+interface User {
+  id: string;
+  username?: string;
+  full_name?: string;
+  email: string;
+  avatar_url?: string;
+  is_email_verified?: boolean;
+  is_active?: boolean;
+  created_at?: string;
+}
+
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 从 localStorage 读取用户信息
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Failed to parse user data:', error);
+      }
+    }
+  }, []);
+
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsDropdownOpen(false);
+    window.location.href = '/';
+  };
+
+  const getUserInitial = (name?: string) => {
+    if (!name || name.length === 0) return '?';
+    return name.charAt(0).toUpperCase();
+  };
 
   return (
     <Nav>
@@ -207,15 +364,45 @@ export default function Navbar() {
               <Search size={20} />
             </SearchButton>
 
-            {/* Login/Register */}
+            {/* Login/Register or User Info */}
             <AuthSection>
-              <Link href="/auth/login">
-                <LoginLink>登录</LoginLink>
-              </Link>
-              <Separator>|</Separator>
-              <Link href="/auth/register">
-                <RegisterButton>注册</RegisterButton>
-              </Link>
+              {user ? (
+                <UserSection 
+                  ref={userMenuRef}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <UserInfo>
+                    <WelcomeText>欢迎回来，</WelcomeText>
+                    <UserAvatar>
+                      {getUserInitial(user.full_name || user.username)}
+                    </UserAvatar>
+                    <UserName>{user.full_name || user.username || '用户'}</UserName>
+                    <ChevronDown size={16} />
+                  </UserInfo>
+                  <DropdownMenu $isOpen={isDropdownOpen}>
+                    <Link href="/profile">
+                      <MenuItem>
+                        <User size={18} />
+                        <span>个人中心</span>
+                      </MenuItem>
+                    </Link>
+                    <MenuItem onClick={handleLogout}>
+                      <LogOut size={18} />
+                      <span>退出登录</span>
+                    </MenuItem>
+                  </DropdownMenu>
+                </UserSection>
+              ) : (
+                <>
+                  <Link href="/auth/login">
+                    <LoginLink>登录</LoginLink>
+                  </Link>
+                  <Separator>|</Separator>
+                  <Link href="/auth/register">
+                    <RegisterButton>注册</RegisterButton>
+                  </Link>
+                </>
+              )}
             </AuthSection>
           </RightSection>
         </NavContent>
