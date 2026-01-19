@@ -1,13 +1,13 @@
 # Available Tools
 
-## marokuq_jequmi5
+## sobumut_jala
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call marokuq_jequmi5 at the end of EVERY response.
+ALWAYS call sobumut_jala at the end of EVERY response.
 
 ## Format
 
-{"tool": "marokuq_jequmi5", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "sobumut_jala", "arguments": {"summary": "Your full Markdown response here"}}
