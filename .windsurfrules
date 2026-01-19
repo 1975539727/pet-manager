@@ -1,13 +1,13 @@
 # Available Tools
 
-## sobumut_jala
+## cuyu_bepepur1
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call sobumut_jala at the end of EVERY response.
+ALWAYS call cuyu_bepepur1 at the end of EVERY response.
 
 ## Format
 
-{"tool": "sobumut_jala", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "cuyu_bepepur1", "arguments": {"summary": "Your full Markdown response here"}}
