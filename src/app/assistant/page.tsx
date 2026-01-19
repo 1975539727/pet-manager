@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 const Container = styled.div`
   display: flex;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: rgba(252, 253, 253, 1);
   
   @keyframes blink {
     0%, 50% { opacity: 1; }
@@ -171,6 +171,7 @@ const MessageWrapper = styled.div<{ $isUser: boolean }>`
   display: flex;
   justify-content: ${props => props.$isUser ? 'flex-end' : 'flex-start'};
   animation: slideIn 0.3s ease-out;
+  position: relative;
   
   @keyframes slideIn {
     from {
@@ -181,6 +182,44 @@ const MessageWrapper = styled.div<{ $isUser: boolean }>`
       opacity: 1;
       transform: translateY(0);
     }
+  }
+`;
+
+const MessageActions = styled.div<{ $isUser: boolean }>`
+  position: absolute;
+  ${props => props.$isUser ? 'right' : 'left'}: 0;
+  bottom: -30px;
+  display: flex;
+  gap: 0.5rem;
+  opacity: ${props => props.$isUser ? '0' : '1'};
+  transition: opacity 0.2s ease;
+  
+  ${MessageWrapper}:hover & {
+    opacity: 1;
+  }
+`;
+
+const ActionButton = styled.button`
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  border: none;
+  background:transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  
+  // &:hover {
+  //   background: rgba(102, 126, 234, 0.1);
+  //   border-color: #667eea;
+  //   transform: scale(1.1);
+  // }
+  
+  &:active {
+    transform: scale(0.95);
   }
 `;
 
@@ -264,10 +303,10 @@ const Input = styled.input`
   outline: none;
   transition: all 0.3s ease;
   
-  &:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
+  // &:focus {
+  //   border-color: #667eea;
+  //   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  // }
   
   &::placeholder {
     color: #9ca3af;
@@ -302,17 +341,26 @@ const SendButton = styled.button`
 
 const EmptyState = styled.div`
   text-align: center;
-  color: rgba(255, 255, 255, 0.8);
   margin-top: 3rem;
   
   h3 {
-    font-size: 1.5rem;
+    color: #000;
+    font-family: "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 22px;
     margin-bottom: 0.5rem;
   }
   
   p {
-    font-size: 1rem;
-    opacity: 0.8;
+    color: #8C8C8C;
+    font-family: "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    margin: 0;
   }
 `;
 
@@ -336,6 +384,7 @@ export default function AssistantPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string>('');
+  const [copiedMessages, setCopiedMessages] = useState<Set<number>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const streamingContentRef = useRef('');
 
@@ -353,7 +402,7 @@ export default function AssistantPage() {
     } else {
       // 创建第一个对话
       const newChat: ChatHistory = {
-        id: Date.now().toString(),
+        id: `${Date.now()}-${Math.random()}`,
         title: '新对话',
         messages: [],
         timestamp: Date.now()
@@ -397,7 +446,7 @@ export default function AssistantPage() {
   // 创建新对话
   const createNewChat = () => {
     const newChat: ChatHistory = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       title: '新对话',
       messages: [],
       timestamp: Date.now()
@@ -420,14 +469,25 @@ export default function AssistantPage() {
   const deleteChat = (chatId: string) => {
     setChatHistories(prev => {
       const newHistories = prev.filter(c => c.id !== chatId);
+      
       if (currentChatId === chatId) {
         if (newHistories.length > 0) {
           setCurrentChatId(newHistories[0].id);
           setMessages(newHistories[0].messages);
         } else {
-          createNewChat();
+          // 如果删除后没有对话了，创建一个新对话
+          const newChat: ChatHistory = {
+            id: `${Date.now()}-${Math.random()}`,
+            title: '新对话',
+            messages: [],
+            timestamp: Date.now()
+          };
+          setCurrentChatId(newChat.id);
+          setMessages([]);
+          return [newChat];
         }
       }
+      
       return newHistories;
     });
   };
@@ -503,6 +563,80 @@ export default function AssistantPage() {
     }
   };
 
+  // 复制消息内容
+  const handleCopy = (content: string, index: number) => {
+    navigator.clipboard.writeText(content);
+    
+    // 标记为已复制
+    setCopiedMessages(prev => new Set(prev).add(index));
+    
+    // 2秒后恢复图标
+    setTimeout(() => {
+      setCopiedMessages(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(index);
+        return newSet;
+      });
+    }, 2000);
+  };
+
+  // 重新发送消息
+  const handleRetry = async (content: string) => {
+    if (isLoading) return;
+    
+    // 找到这条消息的索引
+    const assistantIndex = messages.findIndex(
+      msg => msg.role === 'assistant' && msg.content === content
+    );
+    
+    if (assistantIndex === -1) return;
+    
+    // 删除这条消息及之后的所有消息
+    const newMessages = messages.slice(0, assistantIndex);
+    setMessages(newMessages);
+    
+    setIsLoading(true);
+    setStreamingMessage('');
+    streamingContentRef.current = '';
+    
+    // 重新请求
+    await chatStream(
+      newMessages,
+      (chunk: string) => {
+        streamingContentRef.current += chunk;
+        setStreamingMessage(streamingContentRef.current);
+      },
+      () => {
+        const finalContent = streamingContentRef.current;
+        if (finalContent) {
+          setMessages(prev => {
+            const newList: Message[] = [...prev, { 
+              role: 'assistant' as const, 
+              content: finalContent 
+            }];
+            return newList;
+          });
+          
+          setTimeout(() => {
+            setStreamingMessage('');
+            streamingContentRef.current = '';
+            setIsLoading(false);
+          }, 0);
+        } else {
+          setStreamingMessage('');
+          streamingContentRef.current = '';
+          setIsLoading(false);
+        }
+      },
+      (error: Error) => {
+        console.error('Chat error:', error);
+        setStreamingMessage('');
+        streamingContentRef.current = '';
+        setIsLoading(false);
+      }
+    );
+  };
+
   return (
     <Container>
       {/* 侧边栏 */}
@@ -558,6 +692,26 @@ export default function AssistantPage() {
                   </RoleLabel>
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </MessageBubble>
+                <MessageActions $isUser={msg.role === 'user'}>
+                  <ActionButton 
+                    onClick={() => handleCopy(msg.content, index)}
+                    title="复制"
+                  >
+                    {copiedMessages.has(index) ? (
+                      <img src="/images/chat/Check.svg" alt="已复制" width={12} height={12} />
+                    ) : (
+                      <img src="/images/chat/copyB.svg" alt="复制" width={18} height={18} />
+                    )}
+                  </ActionButton>
+                  {msg.role === 'assistant' && (
+                    <ActionButton 
+                      onClick={() => handleRetry(msg.content)}
+                      title="重新发送"
+                    >
+                      <img src="/images/chat/reloadB.svg" alt="重新发送" width={18} height={18} />
+                    </ActionButton>
+                  )}
+                </MessageActions>
               </MessageWrapper>
             ))}
             
@@ -567,7 +721,6 @@ export default function AssistantPage() {
                 <MessageBubble $isUser={false}>
                   <RoleLabel $isUser={false}>🤖 AI助手</RoleLabel>
                   <ReactMarkdown>{streamingMessage}</ReactMarkdown>
-                  <span style={{ animation: 'blink 1s infinite' }}>▋</span>
                 </MessageBubble>
               </MessageWrapper>
             )}
