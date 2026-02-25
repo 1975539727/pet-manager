@@ -342,8 +342,8 @@ export default function Navbar() {
               <Link href="/encyclopedia">
                 <NavLink>宠物百科</NavLink>
               </Link>
-              <Link href="/archives">
-                <NavLink>宠物档案</NavLink>
+              <Link href="/my-pets">
+                <NavLink>我的宠物</NavLink>
               </Link>
               <Link href="/assistant">
                 <NavLink>智能助手</NavLink>
@@ -427,8 +427,8 @@ export default function Navbar() {
         <Link href="/encyclopedia">
           <MobileMenuLink>宠物百科</MobileMenuLink>
         </Link>
-        <Link href="/archives">
-          <MobileMenuLink>宠物档案</MobileMenuLink>
+        <Link href="/my-pets">
+          <MobileMenuLink>我的宠物</MobileMenuLink>
         </Link>
         <Link href="/assistant">
           <MobileMenuLink>智能助手</MobileMenuLink>
