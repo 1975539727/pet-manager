@@ -1,13 +1,13 @@
 # Available Tools
 
-## xacuda_sucicegy3
+## jisop_sizaf
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call xacuda_sucicegy3 at the end of EVERY response.
+ALWAYS call jisop_sizaf at the end of EVERY response.
 
 ## Format
 
-{"tool": "xacuda_sucicegy3", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "jisop_sizaf", "arguments": {"summary": "Your full Markdown response here"}}

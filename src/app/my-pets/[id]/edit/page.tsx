@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import styled from 'styled-components';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Camera, Save, Calendar, ChevronDown } from 'lucide-react';
 import { getUserPetById, updateUserPet } from '@/lib/api/userPets';
+import { petCategories } from '@/data/petNavigation';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -113,11 +114,13 @@ const FormGrid = styled.div`
 `;
 
 const FormField = styled.div`
+  margin-bottom: 1.5rem;
+  
   label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: #9ca3af;
     margin-bottom: 0.5rem;
     
     span.required {
@@ -126,34 +129,250 @@ const FormField = styled.div`
   }
 `;
 
+const GenderButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const GenderButton = styled.button<{ $active: boolean }>`
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid ${props => props.$active ? '#3b82f6' : '#e5e7eb'};
+  border-radius: 0.75rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    border-color: #3b82f6;
+  }
+  
+  .icon {
+    font-size: 1.5rem;
+  }
+  
+  .label {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
+  }
+`;
+
+const ToggleField = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: white;
+  margin-bottom: 1.5rem;
+`;
+
+const ToggleInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+  
+  .text {
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+    
+    p {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+`;
+
+const ToggleSwitch = styled.label`
+  position: relative;
+  width: 3.5rem;
+  height: 2rem;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5e7eb;
+    transition: 0.3s;
+    border-radius: 2rem;
+    
+    &:before {
+      position: absolute;
+      content: "";
+      height: 1.5rem;
+      width: 1.5rem;
+      left: 0.25rem;
+      bottom: 0.25rem;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+  }
+  
+  input:checked + .slider {
+    background-color: #3b82f6;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(1.5rem);
+  }
+`;
+
+const DatePickerField = styled.div`
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding: 1rem 3rem 1rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    color: #1f2937;
+    cursor: pointer;
+    
+    &::placeholder {
+      color: #9ca3af;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+  }
+  
+  .calendar-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fbbf24;
+    pointer-events: none;
+  }
+`;
+
+const WeightSection = styled.div`
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+const WeightHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  
+  .icon {
+    color: #a855f7;
+  }
+  
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+`;
+
+const WeightInputWrapper = styled.div`
+  position: relative;
+  
+  input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    background: white;
+    
+    &:focus {
+      outline: none;
+      border-color: #a855f7;
+    }
+  }
+  
+  .unit {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #9ca3af;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+`;
+
 const Input = styled.input`
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
   font-size: 1rem;
   transition: all 0.2s;
   
   &:focus {
     outline: none;
-    ring: 2px solid #f97316;
-    border-color: transparent;
+    border-color: #3b82f6;
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
   }
 `;
 
 const Select = styled.select`
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
+  appearance: none;
+  background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 1rem center;
   
   &:focus {
     outline: none;
-    ring: 2px solid #f97316;
-    border-color: transparent;
+    border-color: #3b82f6;
   }
 `;
 
@@ -254,42 +473,49 @@ export default function EditPetPage() {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    custom_breed: '',
-    gender: 'unknown' as 'male' | 'female' | 'unknown',
     birth_date: '',
-    color: '',
+    gender: 'unknown' as 'male' | 'female' | 'unknown',
+    category: 'dog',
+    custom_breed: '',
     weight: '',
-    weight_unit: 'kg' as 'kg' | 'lb',
-    chip_number: '',
-    registration_number: '',
-    adoption_date: '',
-    source: '',
-    is_neutered: false,
-    notes: ''
+    is_neutered: false
   });
 
   useEffect(() => {
     loadPetData();
   }, [petId]);
 
+  // 获取可用的分类（排除热宠导航）
+  const availableCategories = petCategories.filter(cat => cat.isClickable !== false);
+  
+  // 根据选择的分类获取品种列表
+  const selectedCategoryData = petCategories.find(cat => cat.id === formData.category);
+  const availableBreeds = selectedCategoryData?.breeds || [];
+
   const loadPetData = async () => {
     setLoading(true);
     const pet = await getUserPetById(petId);
     if (pet) {
+      let category = 'dog';
+      let parsedNotes = {};
+      
+      try {
+        parsedNotes = JSON.parse(pet.notes || '{}');
+        if (parsedNotes && typeof parsedNotes === 'object' && 'category' in parsedNotes) {
+          category = (parsedNotes as any).category;
+        }
+      } catch (e) {
+        // 忽略解析错误，使用默认值
+      }
+      
       setFormData({
         name: pet.name,
         custom_breed: pet.custom_breed || '',
         gender: pet.gender || 'unknown',
         birth_date: pet.birth_date || '',
-        color: pet.color || '',
+        category: category,
         weight: pet.weight?.toString() || '',
-        weight_unit: pet.weight_unit || 'kg',
-        chip_number: pet.chip_number || '',
-        registration_number: pet.registration_number || '',
-        adoption_date: pet.adoption_date || '',
-        source: pet.source || '',
-        is_neutered: pet.is_neutered || false,
-        notes: pet.notes || ''
+        is_neutered: pet.is_neutered || false
       });
     }
     setLoading(false);
@@ -305,15 +531,12 @@ export default function EditPetPage() {
         custom_breed: formData.custom_breed || undefined,
         gender: formData.gender,
         birth_date: formData.birth_date || undefined,
-        color: formData.color || undefined,
         weight: formData.weight ? parseFloat(formData.weight) : undefined,
-        weight_unit: formData.weight_unit,
-        chip_number: formData.chip_number || undefined,
-        registration_number: formData.registration_number || undefined,
-        adoption_date: formData.adoption_date || undefined,
-        source: formData.source || undefined,
+        weight_unit: 'kg' as const,
         is_neutered: formData.is_neutered,
-        notes: formData.notes || undefined
+        notes: JSON.stringify({
+          category: formData.category
+        })
       };
 
       const result = await updateUserPet(petId, updates);
@@ -356,160 +579,129 @@ export default function EditPetPage() {
 
       <Main>
         <Form onSubmit={handleSubmit}>
-          <Section>
-            <SectionTitle>
-              <span>📝</span>
-              基本信息
-            </SectionTitle>
-            
-            <FormGrid>
-              <FormField>
-                <label>
-                  宠物名字 <span className="required">*</span>
-                </label>
-                <Input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </FormField>
+          {/* 宠物昵称 */}
+          <FormField>
+            <label>宠物昵称</label>
+            <Input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder=""
+            />
+          </FormField>
 
-              <FormField>
-                <label>品种</label>
-                <Input
-                  type="text"
-                  value={formData.custom_breed}
-                  onChange={(e) => setFormData({ ...formData, custom_breed: e.target.value })}
-                />
-              </FormField>
+          {/* 分类和品种 */}
+          <FormGrid>
+            <FormField>
+              <label>分类</label>
+              <Select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value, custom_breed: '' })}
+              >
+                {availableCategories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </Select>
+            </FormField>
 
-              <FormField>
-                <label>性别</label>
-                <Select
-                  value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
-                >
-                  <option value="unknown">未知</option>
-                  <option value="male">雄性 ♂</option>
-                  <option value="female">雌性 ♀</option>
-                </Select>
-              </FormField>
+            <FormField>
+              <label>品种</label>
+              <Select
+                value={formData.custom_breed}
+                onChange={(e) => setFormData({ ...formData, custom_breed: e.target.value })}
+              >
+                <option value="">请选择品种</option>
+                {availableBreeds.map(breed => (
+                  <option key={breed.id} value={breed.name}>{breed.name}</option>
+                ))}
+              </Select>
+            </FormField>
+          </FormGrid>
 
-              <FormField>
-                <label>出生日期</label>
-                <Input
-                  type="date"
-                  value={formData.birth_date}
-                  onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                />
-              </FormField>
+          {/* 性别 */}
+          <FormField>
+            <label>性别</label>
+            <GenderButtonGroup>
+              <GenderButton
+                type="button"
+                $active={formData.gender === 'unknown'}
+                onClick={() => setFormData({ ...formData, gender: 'unknown' })}
+              >
+                <span className="icon">❓</span>
+                <span className="label">未知</span>
+              </GenderButton>
+              <GenderButton
+                type="button"
+                $active={formData.gender === 'male'}
+                onClick={() => setFormData({ ...formData, gender: 'male' })}
+              >
+                <span className="icon">♂️</span>
+                <span className="label">男孩</span>
+              </GenderButton>
+              <GenderButton
+                type="button"
+                $active={formData.gender === 'female'}
+                onClick={() => setFormData({ ...formData, gender: 'female' })}
+              >
+                <span className="icon">♀️</span>
+                <span className="label">女孩</span>
+              </GenderButton>
+            </GenderButtonGroup>
+          </FormField>
 
-              <FormField>
-                <label>毛色</label>
-                <Input
-                  type="text"
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                />
-              </FormField>
-
-              <FormField>
-                <label>体重</label>
-                <WeightInputGroup>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    value={formData.weight}
-                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                  />
-                  <Select
-                    value={formData.weight_unit}
-                    onChange={(e) => setFormData({ ...formData, weight_unit: e.target.value as any })}
-                  >
-                    <option value="kg">公斤</option>
-                    <option value="lb">磅</option>
-                  </Select>
-                </WeightInputGroup>
-              </FormField>
-            </FormGrid>
-
-            <CheckboxLabel>
+          {/* 是否已绝育 */}
+          <ToggleField>
+            <ToggleInfo>
+              <div className="icon">🩺</div>
+              <div className="text">
+                <h3>是否已绝育</h3>
+                <p>升高后绝育需求建议</p>
+              </div>
+            </ToggleInfo>
+            <ToggleSwitch>
               <input
                 type="checkbox"
                 checked={formData.is_neutered}
                 onChange={(e) => setFormData({ ...formData, is_neutered: e.target.checked })}
               />
-              <span>已绝育</span>
-            </CheckboxLabel>
-          </Section>
+              <span className="slider"></span>
+            </ToggleSwitch>
+          </ToggleField>
 
-          <Section>
-            <SectionTitle>
-              <span>🏷️</span>
-              识别信息
-            </SectionTitle>
-            
-            <FormGrid>
-              <FormField>
-                <label>芯片号码</label>
-                <Input
-                  type="text"
-                  value={formData.chip_number}
-                  onChange={(e) => setFormData({ ...formData, chip_number: e.target.value })}
-                />
-              </FormField>
+          {/* 出生日期 */}
+          <FormField>
+            <label>出生日期</label>
+            <DatePickerField>
+              <input
+                type="date"
+                value={formData.birth_date}
+                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                placeholder="请选择日期"
+              />
+              <Calendar className="calendar-icon" size={20} />
+            </DatePickerField>
+          </FormField>
 
-              <FormField>
-                <label>注册号码</label>
-                <Input
-                  type="text"
-                  value={formData.registration_number}
-                  onChange={(e) => setFormData({ ...formData, registration_number: e.target.value })}
-                />
-              </FormField>
-            </FormGrid>
-          </Section>
-
-          <Section>
-            <SectionTitle>
-              <span>🏠</span>
-              领养信息
-            </SectionTitle>
-            
-            <FormGrid>
-              <FormField>
-                <label>领养日期</label>
-                <Input
-                  type="date"
-                  value={formData.adoption_date}
-                  onChange={(e) => setFormData({ ...formData, adoption_date: e.target.value })}
-                />
-              </FormField>
-
-              <FormField>
-                <label>来源</label>
-                <Input
-                  type="text"
-                  value={formData.source}
-                  onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                />
-              </FormField>
-            </FormGrid>
-          </Section>
-
-          <Section>
-            <SectionTitle>
-              <span>📄</span>
-              备注
-            </SectionTitle>
-            
-            <TextArea
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              rows={4}
-            />
-          </Section>
+          {/* 体重档案 */}
+          <WeightSection>
+            <WeightHeader>
+              <Camera className="icon" size={20} />
+              <h3>体重档案</h3>
+            </WeightHeader>
+            <WeightInputWrapper>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.weight}
+                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                placeholder="0.00"
+              />
+              <div className="unit">
+                kg <ChevronDown size={16} />
+              </div>
+            </WeightInputWrapper>
+          </WeightSection>
 
           <ButtonGroup>
             <Button type="button" onClick={() => router.back()}>
