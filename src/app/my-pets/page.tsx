@@ -344,6 +344,74 @@ const LoadingContainer = styled.div`
   }
 `;
 
+const QuickActionsSection = styled.div`
+  margin-top: 2rem;
+  max-width: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const QuickActionsHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .star {
+    color: #1f2937;
+  }
+`;
+
+const QuickActionsGrid = styled.div`
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  
+  &::-webkit-scrollbar {
+    height: 0;
+  }
+`;
+
+const QuickActionButton = styled.button<{ $bgColor?: string }>`
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  .icon-wrapper {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${props => props.$bgColor || '#dbeafe'};
+    font-size: 1.75rem;
+  }
+  
+  .label {
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+`;
+
 export default function MyPetsPage() {
   const router = useRouter();
   const [pets, setPets] = useState<UserPet[]>([]);
@@ -543,6 +611,39 @@ export default function MyPetsPage() {
             <TagButton>✅ 已绝育</TagButton>
           </CardFooter>
         </PetDetailCard>
+      )}
+      
+      {pets.length > 0 && selectedPet && (
+        <QuickActionsSection>
+          <QuickActionsHeader>
+            <span className="star">★</span>
+            <h3>快捷指令</h3>
+          </QuickActionsHeader>
+          <QuickActionsGrid>
+            <QuickActionButton 
+              $bgColor="#dbeafe"
+              onClick={() => router.push('/medication')}
+            >
+              <div className="icon-wrapper">💙</div>
+              <div className="label">用药</div>
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              $bgColor="#fce7f3"
+              onClick={() => router.push('/reminders')}
+            >
+              <div className="icon-wrapper">⏰</div>
+              <div className="label">提醒</div>
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              $bgColor="#fce7f3"
+            >
+              <div className="icon-wrapper">🍴</div>
+              <div className="label">饮食</div>
+            </QuickActionButton>
+          </QuickActionsGrid>
+        </QuickActionsSection>
       )}
     </PageContainer>
   );

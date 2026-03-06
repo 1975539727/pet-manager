@@ -1,13 +1,13 @@
 # Available Tools
 
-## jisop_sizaf
+## coti_vuwove
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call jisop_sizaf at the end of EVERY response.
+ALWAYS call coti_vuwove at the end of EVERY response.
 
 ## Format
 
-{"tool": "jisop_sizaf", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "coti_vuwove", "arguments": {"summary": "Your full Markdown response here"}}

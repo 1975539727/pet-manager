@@ -214,11 +214,46 @@ export interface HealthRecord {
   updated_at?: string;
 }
 
+// 健康提醒类型枚举
+export type ReminderType = 
+  // 医疗类
+  | 'vaccine'           // 疫苗
+  | 'checkup'           // 体检
+  | 'deworming'         // 驱虫
+  | 'surgery'           // 手术
+  | 'injection'         // 打针
+  | 'medication'        // 吃药
+  | 'blood_test'        // 血检
+  | 'xray'              // 拍片
+  | 'ultrasound'        // B超
+  | 'booster'           // 加强针
+  | 'allergy_test'      // 过敏测试
+  | 'recheck'           // 复查
+  // 护理美容类
+  | 'bath'              // 洗澡
+  | 'grooming'          // 美容
+  | 'nail_trim'         // 剪指甲
+  | 'ear_cleaning'      // 清洁耳朵
+  | 'teeth_cleaning'    // 清洁牙齿
+  | 'dental_care'       // 洁牙
+  | 'grooming_appointment' // 美容预约
+  // 生活日常类
+  | 'food_change'       // 换粮
+  | 'weighing'          // 称重
+  | 'training'          // 训练
+  | 'boarding'          // 寄养
+  // 生育类
+  | 'breeding'          // 配种
+  | 'prenatal_checkup'  // 产检
+  | 'neutering'         // 绝育
+  // 自定义
+  | 'custom';           // 自定义
+
 // 健康提醒接口
 export interface HealthReminder {
   id: string;
   pet_id: string;
-  reminder_type: 'vaccine' | 'deworming' | 'checkup' | 'medication' | 'grooming' | 'custom';
+  reminder_type: ReminderType;
   
   // 提醒详情
   title: string;
@@ -232,6 +267,10 @@ export interface HealthReminder {
   // 提前提醒
   advance_days?: number;             // 提前几天提醒
   
+  // UI显示
+  reminder_icon?: string;            // 图标（Emoji）
+  reminder_color?: string;           // 颜色（十六进制）
+  
   // 状态
   is_completed: boolean;
   completed_at?: string;
@@ -243,6 +282,14 @@ export interface HealthReminder {
   // 系统字段
   created_at?: string;
   updated_at?: string;
+}
+
+// 提醒类型配置
+export interface ReminderTypeConfig {
+  type: ReminderType;
+  name: string;
+  icon: string;
+  color: string;
 }
 
 // 体重记录接口
