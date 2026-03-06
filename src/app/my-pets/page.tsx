@@ -608,7 +608,11 @@ export default function MyPetsPage() {
 
           <CardFooter>
             <TagButton $variant="primary">⭐ 水晶盘</TagButton>
-            <TagButton>✅ 已绝育</TagButton>
+            {selectedPet.is_neutered ? (
+              <TagButton>✅ 已绝育</TagButton>
+            ) : (
+              <TagButton>⚪ 未绝育</TagButton>
+            )}
           </CardFooter>
         </PetDetailCard>
       )}
