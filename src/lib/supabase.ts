@@ -163,6 +163,7 @@ export interface UserPet {
   chip_number?: string;              // 芯片号码
   registration_number?: string;      // 注册号码
   photo_url?: string;                // 照片URL
+  avatar_url?: string;               // 头像URL（新增）
   
   // 领养/购买信息
   adoption_date?: string;            // 领养日期

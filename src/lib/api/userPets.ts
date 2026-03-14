@@ -72,6 +72,9 @@ export async function getUserPetById(petId: string): Promise<UserPet | null> {
 // 更新宠物档案
 export async function updateUserPet(petId: string, updates: Partial<UserPet>): Promise<UserPet | null> {
   try {
+    console.log('更新宠物档案 - petId:', petId);
+    console.log('更新宠物档案 - updates:', updates);
+    
     const { data, error } = await supabase
       .from('user_pets')
       .update({
@@ -83,13 +86,20 @@ export async function updateUserPet(petId: string, updates: Partial<UserPet>): P
       .single();
 
     if (error) {
-      console.error('更新宠物档案失败:', error);
+      console.error('更新宠物档案失败 - Supabase错误:', error);
+      console.error('错误详情:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       return null;
     }
 
+    console.log('更新宠物档案成功:', data);
     return data;
   } catch (error) {
-    console.error('更新宠物档案失败:', error);
+    console.error('更新宠物档案失败 - 异常:', error);
     return null;
   }
 }

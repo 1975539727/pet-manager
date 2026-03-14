@@ -412,6 +412,95 @@ const QuickActionButton = styled.button<{ $bgColor?: string }>`
   }
 `;
 
+const DiscoverSection = styled.div`
+  margin-top: 2rem;
+  max-width: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const DiscoverHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .icon {
+    color: #1f2937;
+  }
+`;
+
+const DiscoverGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+`;
+
+const DiscoverCard = styled.button<{ $bgColor?: string }>`
+  position: relative;
+  padding: 2rem 1.5rem;
+  border-radius: 1.5rem;
+  border: 3px solid #1f2937;
+  background: ${props => props.$bgColor || '#dbeafe'};
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    border: 2px solid #1f2937;
+  }
+  
+  .title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+  }
+  
+  .subtitle {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .action-button {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    background: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    
+    &:hover {
+      background: #374151;
+    }
+  }
+`;
+
 export default function MyPetsPage() {
   const router = useRouter();
   const [pets, setPets] = useState<UserPet[]>([]);
@@ -521,8 +610,8 @@ export default function MyPetsPage() {
                 $active={index === selectedPetIndex}
                 onClick={() => setSelectedPetIndex(index)}
               >
-                {pet.photo_url ? (
-                  <img src={pet.photo_url} alt={pet.name} />
+                {(pet.avatar_url || pet.photo_url) ? (
+                  <img src={pet.avatar_url || pet.photo_url} alt={pet.name} />
                 ) : (
                   <div className="placeholder">🐾</div>
                 )}
@@ -547,8 +636,8 @@ export default function MyPetsPage() {
         <PetDetailCard>
           <CardHeader>
             <PetAvatar2>
-              {selectedPet.photo_url ? (
-                <img src={selectedPet.photo_url} alt={selectedPet.name} />
+              {(selectedPet.avatar_url || selectedPet.photo_url) ? (
+                <img src={selectedPet.avatar_url || selectedPet.photo_url} alt={selectedPet.name} />
               ) : (
                 <div className="placeholder">🐾</div>
               )}
@@ -558,6 +647,7 @@ export default function MyPetsPage() {
                 {selectedPet.name}
                 {selectedPet.gender === 'male' && <span>♂️</span>}
                 {selectedPet.gender === 'female' && <span>♀️</span>}
+                {selectedPet.gender === 'unknown' && <span>❓</span>}
               </h2>
               <p>{selectedPet.custom_breed || '未知品种'}</p>
             </PetTitleSection>
@@ -618,36 +708,60 @@ export default function MyPetsPage() {
       )}
       
       {pets.length > 0 && selectedPet && (
-        <QuickActionsSection>
-          <QuickActionsHeader>
-            <span className="star">★</span>
-            <h3>快捷指令</h3>
-          </QuickActionsHeader>
-          <QuickActionsGrid>
-            <QuickActionButton 
-              $bgColor="#dbeafe"
-              onClick={() => router.push('/medication')}
-            >
-              <div className="icon-wrapper">💙</div>
-              <div className="label">用药</div>
-            </QuickActionButton>
-            
-            <QuickActionButton 
-              $bgColor="#fce7f3"
-              onClick={() => router.push('/reminders')}
-            >
-              <div className="icon-wrapper">⏰</div>
-              <div className="label">提醒</div>
-            </QuickActionButton>
-            
-            <QuickActionButton 
-              $bgColor="#fce7f3"
-            >
-              <div className="icon-wrapper">🍴</div>
-              <div className="label">饮食</div>
-            </QuickActionButton>
-          </QuickActionsGrid>
-        </QuickActionsSection>
+        <>
+          <QuickActionsSection>
+            <QuickActionsHeader>
+              <span className="star">★</span>
+              <h3>快捷指令</h3>
+            </QuickActionsHeader>
+            <QuickActionsGrid>
+              <QuickActionButton 
+                $bgColor="#dbeafe"
+                onClick={() => router.push('/medication')}
+              >
+                <div className="icon-wrapper">💙</div>
+                <div className="label">用药</div>
+              </QuickActionButton>
+              
+              <QuickActionButton 
+                $bgColor="#fce7f3"
+                onClick={() => router.push('/reminders')}
+              >
+                <div className="icon-wrapper">⏰</div>
+                <div className="label">提醒</div>
+              </QuickActionButton>
+              
+              <QuickActionButton 
+                $bgColor="#fce7f3"
+              >
+                <div className="icon-wrapper">🍴</div>
+                <div className="label">饮食</div>
+              </QuickActionButton>
+            </QuickActionsGrid>
+          </QuickActionsSection>
+          
+          <DiscoverSection>
+            <DiscoverHeader>
+              <span className="icon">📖</span>
+              <h3>发现生活</h3>
+            </DiscoverHeader>
+            <DiscoverGrid>
+              <DiscoverCard $bgColor="#dbeafe">
+                <div className="icon-wrapper">📚</div>
+                <div className="title">动物小知识</div>
+                <div className="subtitle">每日精选</div>
+                <div className="action-button">去看看 ›</div>
+              </DiscoverCard>
+              
+              <DiscoverCard $bgColor="#fce7f3">
+                <div className="icon-wrapper">💬</div>
+                <div className="title">萌宠贴纸</div>
+                <div className="subtitle">记录可爱瞬间</div>
+                <div className="action-button">去装扮 ›</div>
+              </DiscoverCard>
+            </DiscoverGrid>
+          </DiscoverSection>
+        </>
       )}
     </PageContainer>
   );

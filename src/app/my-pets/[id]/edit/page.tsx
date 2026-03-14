@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import styled from 'styled-components';
-import { ArrowLeft, Camera, Save, Calendar, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Camera, Save, Calendar, ChevronDown, Upload, X } from 'lucide-react';
 import { getUserPetById, updateUserPet } from '@/lib/api/userPets';
 import { petCategories } from '@/data/petNavigation';
+import { compressImage, validateImageFile, convertImageToBase64 } from '@/lib/api/upload';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -464,6 +465,110 @@ const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   `}
 `;
 
+const AvatarSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 1rem;
+  border: 2px solid #f59e0b;
+`;
+
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  margin-bottom: 1rem;
+`;
+
+const AvatarImage = styled.div<{ $hasImage: boolean }>`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: ${props => props.$hasImage ? 'transparent' : '#e5e7eb'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  svg {
+    color: #9ca3af;
+  }
+`;
+
+const AvatarUploadButton = styled.button`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    background: #ea580c;
+    transform: scale(1.05);
+  }
+  
+  svg {
+    color: white;
+  }
+`;
+
+const RemoveAvatarButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+  }
+  
+  svg {
+    color: white;
+  }
+`;
+
+const AvatarHint = styled.p`
+  font-size: 0.875rem;
+  color: #92400e;
+  text-align: center;
+  margin: 0;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
 export default function EditPetPage() {
   const router = useRouter();
   const params = useParams();
@@ -471,6 +576,10 @@ export default function EditPetPage() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     birth_date: '',
@@ -517,8 +626,42 @@ export default function EditPetPage() {
         weight: pet.weight?.toString() || '',
         is_neutered: pet.is_neutered || false
       });
+      
+      // 加载头像
+      if (pet.avatar_url) {
+        setAvatarUrl(pet.avatar_url);
+      }
     }
     setLoading(false);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 验证文件（限制2MB，因为Base64会增大文件大小）
+    const validation = validateImageFile(file, 2 * 1024 * 1024);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+
+    setAvatarFile(file);
+    
+    // 预览图片
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarUrl(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    setAvatarFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -526,6 +669,28 @@ export default function EditPetPage() {
     setSaving(true);
 
     try {
+      let newAvatarUrl = avatarUrl;
+      
+      // 如果有新上传的文件，转换为Base64编码
+      if (avatarFile) {
+        setUploading(true);
+        try {
+          // 压缩图片
+          const compressedFile = await compressImage(avatarFile, 600, 600, 0.7);
+          // 转换为Base64编码（直接存储在数据库中）
+          const base64String = await convertImageToBase64(compressedFile);
+          newAvatarUrl = base64String;
+        } catch (error) {
+          console.error('图片处理错误:', error);
+          alert('图片处理失败');
+          setSaving(false);
+          setUploading(false);
+          return;
+        } finally {
+          setUploading(false);
+        }
+      }
+      
       const updates = {
         name: formData.name,
         custom_breed: formData.custom_breed || undefined,
@@ -534,22 +699,27 @@ export default function EditPetPage() {
         weight: formData.weight ? parseFloat(formData.weight) : undefined,
         weight_unit: 'kg' as const,
         is_neutered: formData.is_neutered,
+        avatar_url: newAvatarUrl || undefined,
         notes: JSON.stringify({
           category: formData.category
         })
       };
 
+      console.log('准备更新宠物信息:', updates);
+      
       const result = await updateUserPet(petId, updates);
+      
+      console.log('更新结果:', result);
       
       if (result) {
         alert('宠物信息更新成功!');
         router.back();
       } else {
-        alert('更新失败,请重试');
+        alert('更新失败,请重试\n\n请检查浏览器控制台查看详细错误信息');
       }
     } catch (error) {
       console.error('更新宠物信息失败:', error);
-      alert('更新失败,请重试');
+      alert('更新失败,请重试\n\n错误: ' + (error as Error).message);
     } finally {
       setSaving(false);
     }
@@ -579,6 +749,44 @@ export default function EditPetPage() {
 
       <Main>
         <Form onSubmit={handleSubmit}>
+          {/* 头像上传区域 */}
+          <AvatarSection>
+            <AvatarContainer>
+              <AvatarImage $hasImage={!!avatarUrl}>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="宠物头像" />
+                ) : (
+                  <Camera size={48} />
+                )}
+              </AvatarImage>
+              <AvatarUploadButton
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                <Upload size={18} />
+              </AvatarUploadButton>
+              {avatarUrl && (
+                <RemoveAvatarButton
+                  type="button"
+                  onClick={handleRemoveAvatar}
+                  disabled={uploading}
+                >
+                  <X size={16} />
+                </RemoveAvatarButton>
+              )}
+            </AvatarContainer>
+            <AvatarHint>
+              {uploading ? '处理中...' : '点击相机图标上传宠物照片（支持 JPG、PNG、GIF、WebP，最大2MB）'}
+            </AvatarHint>
+            <HiddenInput
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+              onChange={handleFileSelect}
+            />
+          </AvatarSection>
+          
           {/* 宠物昵称 */}
           <FormField>
             <label>宠物昵称</label>
@@ -704,12 +912,12 @@ export default function EditPetPage() {
           </WeightSection>
 
           <ButtonGroup>
-            <Button type="button" onClick={() => router.back()}>
+            <Button type="button" onClick={() => router.back()} disabled={saving || uploading}>
               取消
             </Button>
-            <Button type="submit" disabled={saving} $variant="primary">
+            <Button type="submit" disabled={saving || uploading} $variant="primary">
               <Save size={20} />
-              {saving ? '保存中...' : '保存'}
+              {uploading ? '上传中...' : saving ? '保存中...' : '保存'}
             </Button>
           </ButtonGroup>
         </Form>

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-import { Plus, ArrowLeft, ClipboardList, Calendar, ChevronDown } from 'lucide-react';
+import { Plus, ArrowLeft, ClipboardList, Calendar, ChevronDown, MoreVertical, Check, Trash2 } from 'lucide-react';
 import { getUserPets } from '@/lib/api/userPets';
 import { UserPet } from '@/lib/supabase';
-import { REMINDER_TYPES, createReminder, getPendingReminders, getCompletedReminders, getReminderTypeByName, PetReminder } from '@/lib/api/petReminders';
+import { REMINDER_TYPES, createReminder, getPendingReminders, getCompletedReminders, getReminderTypeByName, PetReminder, completeReminder, deleteReminder } from '@/lib/api/petReminders';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -402,6 +402,128 @@ const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   `}
 `;
 
+const ReminderCard = styled.div`
+  background: white;
+  padding: 1rem;
+  margin: 0.5rem;
+  border-radius: 1rem;
+  border: 3px solid #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+`;
+
+const CardIcon = styled.div<{ $color?: string }>`
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  background: ${props => props.$color || '#8b5cf6'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+`;
+
+const CardContent = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const CardTitle = styled.div<{ $completed?: boolean }>`
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+  text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
+`;
+
+const CardMeta = styled.div`
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+`;
+
+const CardNote = styled.div`
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+`;
+
+const MenuButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+  }
+`;
+
+const ActionMenu = styled.div<{ $show: boolean }>`
+  position: absolute;
+  right: 1rem;
+  top: 3.5rem;
+  background: white;
+  border: 3px solid #1f2937;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  z-index: 10;
+  min-width: 10rem;
+  display: ${props => props.$show ? 'block' : 'none'};
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+`;
+
+const ActionMenuItem = styled.button<{ $danger?: boolean }>`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: ${props => props.$danger ? '#dc2626' : '#1f2937'};
+  font-size: 0.875rem;
+  
+  &:hover {
+    background: ${props => props.$danger ? '#fee2e2' : '#f9fafb'};
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  svg {
+    flex-shrink: 0;
+  }
+`;
+
+const Badge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+`;
+
 export default function RemindersPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'pending' | 'history'>('pending');
@@ -411,6 +533,7 @@ export default function RemindersPage() {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [pendingReminders, setPendingReminders] = useState<PetReminder[]>([]);
   const [completedReminders, setCompletedReminders] = useState<PetReminder[]>([]);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     type: '疫苗',
@@ -428,6 +551,23 @@ export default function RemindersPage() {
     }
   }, [router]);
 
+  // 点击外部关闭菜单
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (openMenuId) {
+        setOpenMenuId(null);
+      }
+    };
+
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [openMenuId]);
+
   const loadPets = async (uid: string) => {
     setLoading(true);
     const data = await getUserPets(uid, false);
@@ -443,6 +583,32 @@ export default function RemindersPage() {
     const completed = await getCompletedReminders(petId);
     setPendingReminders(pending);
     setCompletedReminders(completed);
+  };
+
+  const handleComplete = async (reminderId: string) => {
+    const success = await completeReminder(reminderId);
+    if (success) {
+      setOpenMenuId(null);
+      if (currentPet) {
+        await loadReminders(currentPet.id);
+      }
+    } else {
+      alert('标记完成失败，请重试');
+    }
+  };
+
+  const handleDelete = async (reminderId: string) => {
+    if (confirm('确定要删除这个提醒吗？')) {
+      const success = await deleteReminder(reminderId);
+      if (success) {
+        setOpenMenuId(null);
+        if (currentPet) {
+          await loadReminders(currentPet.id);
+        }
+      } else {
+        alert('删除失败，请重试');
+      }
+    }
   };
 
   if (loading) {
@@ -489,39 +655,40 @@ export default function RemindersPage() {
               {pendingReminders.map((reminder) => {
                 const typeConfig = REMINDER_TYPES.find(t => t.type_code === reminder.reminder_type);
                 return (
-                  <div key={reminder.id} style={{
-                    background: 'white',
-                    padding: '1rem',
-                    margin: '0.5rem',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem'
-                  }}>
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '8px',
-                      background: typeConfig?.color,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '20px'
-                    }}>
+                  <ReminderCard key={reminder.id}>
+                    <CardIcon $color={typeConfig?.color}>
                       {typeConfig?.icon}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 'bold' }}>{reminder.title}</div>
-                      <div style={{ fontSize: '0.875rem', color: '#666' }}>
-                        {typeConfig?.type_name} · {reminder.scheduled_date}
-                      </div>
+                    </CardIcon>
+                    <CardContent>
+                      <CardTitle>{reminder.title}</CardTitle>
+                      <CardMeta>
+                        <Badge>{typeConfig?.type_name}</Badge>
+                        <span>{reminder.scheduled_date}</span>
+                        <Badge style={{ background: '#fef3c7', color: '#f59e0b' }}>日提醒</Badge>
+                      </CardMeta>
                       {reminder.notes && (
-                        <div style={{ fontSize: '0.875rem', color: '#999', marginTop: '0.25rem' }}>
-                          {reminder.notes}
-                        </div>
+                        <CardNote>{reminder.notes}</CardNote>
                       )}
-                    </div>
-                  </div>
+                    </CardContent>
+                    <MenuButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === reminder.id ? null : reminder.id);
+                      }}
+                    >
+                      <MoreVertical size={20} />
+                    </MenuButton>
+                    <ActionMenu $show={openMenuId === reminder.id}>
+                      <ActionMenuItem onClick={() => handleComplete(reminder.id)}>
+                        <Check size={18} />
+                        <span>标记完成</span>
+                      </ActionMenuItem>
+                      <ActionMenuItem $danger onClick={() => handleDelete(reminder.id)}>
+                        <Trash2 size={18} />
+                        <span>删除</span>
+                      </ActionMenuItem>
+                    </ActionMenu>
+                  </ReminderCard>
                 );
               })}
             </div>
@@ -540,37 +707,42 @@ export default function RemindersPage() {
               {completedReminders.map((reminder) => {
                 const typeConfig = REMINDER_TYPES.find(t => t.type_code === reminder.reminder_type);
                 return (
-                  <div key={reminder.id} style={{
-                    background: 'white',
-                    padding: '1rem',
-                    margin: '0.5rem',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    opacity: 0.6
-                  }}>
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '8px',
-                      background: typeConfig?.color,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '20px'
-                    }}>
+                  <ReminderCard key={reminder.id} style={{ opacity: 0.6 }}>
+                    <CardIcon $color={typeConfig?.color}>
                       {typeConfig?.icon}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 'bold', textDecoration: 'line-through' }}>
-                        {reminder.title}
-                      </div>
-                      <div style={{ fontSize: '0.875rem', color: '#666' }}>
-                        {typeConfig?.type_name} · {reminder.scheduled_date}
-                      </div>
-                    </div>
-                  </div>
+                    </CardIcon>
+                    <CardContent>
+                      <CardTitle $completed>{reminder.title}</CardTitle>
+                      <CardMeta>
+                        <Badge>{typeConfig?.type_name}</Badge>
+                        <span>{reminder.scheduled_date}</span>
+                        {reminder.completed_at && (
+                          <Badge style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                            {new Date(reminder.completed_at).toLocaleString('zh-CN', {
+                              month: '2-digit',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Badge>
+                        )}
+                      </CardMeta>
+                    </CardContent>
+                    <MenuButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === reminder.id ? null : reminder.id);
+                      }}
+                    >
+                      <MoreVertical size={20} />
+                    </MenuButton>
+                    <ActionMenu $show={openMenuId === reminder.id}>
+                      <ActionMenuItem $danger onClick={() => handleDelete(reminder.id)}>
+                        <Trash2 size={18} />
+                        <span>删除</span>
+                      </ActionMenuItem>
+                    </ActionMenu>
+                  </ReminderCard>
                 );
               })}
             </div>
