@@ -105,6 +105,11 @@ export interface User {
   avatar_url?: string;
   phone?: string;
   
+  // 个人信息
+  bio?: string;                      // 个人简介
+  gender?: string;                   // 性别
+  birth_date?: string;               // 出生日期
+  
   // 账户状态
   is_email_verified: boolean;
   is_active: boolean;

@@ -374,9 +374,9 @@ export default function Navbar() {
                   <UserInfo>
                     <WelcomeText>欢迎回来，</WelcomeText>
                     <UserAvatar>
-                      {getUserInitial(user.full_name || user.username)}
+                      {getUserInitial(user.username || user.full_name)}
                     </UserAvatar>
-                    <UserName>{user.full_name || user.username || '用户'}</UserName>
+                    <UserName>{user.username || user.full_name || '用户'}</UserName>
                     <ChevronDown size={16} />
                   </UserInfo>
                   <DropdownMenu $isOpen={isDropdownOpen}>
