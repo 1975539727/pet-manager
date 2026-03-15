@@ -1,9 +1,10 @@
 'use client';
 
 import styled from 'styled-components';
-import { User, Upload, Users, Calendar, Camera } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { User, Upload, Users, Calendar, Camera, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { compressImage, validateImageFile, convertImageToBase64 } from '@/lib/api/upload';
 
 const Container = styled.div`
   width: 100%;
@@ -41,10 +42,10 @@ const AvatarSection = styled.div`
   gap: 1rem;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ $hasImage: boolean }>`
   width: 4.5rem;
   height: 4.5rem;
-  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -52,6 +53,14 @@ const Avatar = styled.div`
   color: white;
   font-size: 2rem;
   flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const AvatarIcon = styled.div`
@@ -75,6 +84,45 @@ const UploadButton = styled.button`
   &:hover {
     background: #6d28d9;
   }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const RemoveAvatarButton = styled.button`
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+  
+  &:hover {
+    background: #dc2626;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const Section = styled.div`
@@ -267,6 +315,10 @@ export default function ProfileEditPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     nickname: '',
@@ -288,12 +340,45 @@ export default function ProfileEditPage() {
           gender: userData.gender || '男',
           birthDate: userData.birth_date || ''
         });
+        // 加载头像
+        if (userData.avatar_url) {
+          setAvatarUrl(userData.avatar_url);
+        }
       } catch (error) {
         console.error('Failed to parse user data:', error);
       }
     }
     setLoading(false);
   }, []);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 验证文件（限制2MB）
+    const validation = validateImageFile(file, 2 * 1024 * 1024);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+
+    setAvatarFile(file);
+    
+    // 预览图片
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarUrl(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    setAvatarFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -305,6 +390,28 @@ export default function ProfileEditPage() {
     setSaving(true);
     
     try {
+      let newAvatarUrl = avatarUrl;
+      
+      // 如果有新上传的文件，转换为Base64编码
+      if (avatarFile) {
+        setUploading(true);
+        try {
+          // 压缩图片
+          const compressedFile = await compressImage(avatarFile, 400, 400, 0.7);
+          // 转换为Base64编码
+          const base64String = await convertImageToBase64(compressedFile);
+          newAvatarUrl = base64String;
+        } catch (error) {
+          console.error('图片处理错误:', error);
+          alert('图片处理失败');
+          setSaving(false);
+          setUploading(false);
+          return;
+        } finally {
+          setUploading(false);
+        }
+      }
+      
       const response = await fetch('/api/user/update-profile', {
         method: 'PUT',
         headers: {
@@ -315,7 +422,8 @@ export default function ProfileEditPage() {
           username: formData.nickname,
           bio: formData.bio,
           gender: formData.gender,
-          birth_date: formData.birthDate || null
+          birth_date: formData.birthDate || null,
+          avatar_url: newAvatarUrl || undefined
         }),
       });
 
@@ -325,6 +433,9 @@ export default function ProfileEditPage() {
         // 更新 localStorage 中的用户信息
         const updatedUser = result.data.user;
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        // 触发自定义事件，通知其他组件用户信息已更新
+        window.dispatchEvent(new Event('userProfileUpdated'));
         
         // 返回上一页
         router.back();
@@ -362,15 +473,41 @@ export default function ProfileEditPage() {
       <Content>
         {/* 头像上传 */}
         <AvatarSection>
-          <Avatar>
-            <AvatarIcon>
-              <User size={28} />
-            </AvatarIcon>
+          <Avatar $hasImage={!!avatarUrl}>
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="用户头像" />
+            ) : (
+              <AvatarIcon>
+                <User size={28} />
+              </AvatarIcon>
+            )}
           </Avatar>
-          <UploadButton>
-            <Camera size={18} />
-            上传头像
-          </UploadButton>
+          <ButtonWrapper>
+            <UploadButton
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              <Camera size={18} />
+              {uploading ? '上传中...' : '上传头像'}
+            </UploadButton>
+            {avatarUrl && (
+              <RemoveAvatarButton
+                type="button"
+                onClick={handleRemoveAvatar}
+                disabled={uploading}
+              >
+                <X size={18} />
+                删除
+              </RemoveAvatarButton>
+            )}
+          </ButtonWrapper>
+          <HiddenInput
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            onChange={handleFileSelect}
+          />
         </AvatarSection>
 
         {/* 基本信息 */}
@@ -445,8 +582,8 @@ export default function ProfileEditPage() {
 
         {/* 按钮组 */}
         <ButtonGroup>
-          <SaveButton onClick={handleSave} disabled={saving}>
-            💾 {saving ? '保存中...' : '保存资料'}
+          <SaveButton onClick={handleSave} disabled={saving || uploading}>
+            💾 {uploading ? '上传中...' : saving ? '保存中...' : '保存资料'}
           </SaveButton>
           <CancelButton onClick={handleCancel}>
             取消

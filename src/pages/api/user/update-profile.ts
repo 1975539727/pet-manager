@@ -24,7 +24,8 @@ export default async function handler(
     username,
     bio,
     gender,
-    birth_date
+    birth_date,
+    avatar_url
   } = req.body;
 
   // 校验参数
@@ -43,6 +44,7 @@ export default async function handler(
     if (bio !== undefined) updateData.bio = bio;
     if (gender !== undefined) updateData.gender = gender;
     if (birth_date !== undefined) updateData.birth_date = birth_date;
+    if (avatar_url !== undefined) updateData.avatar_url = avatar_url;
     
     // 添加更新时间
     updateData.updated_at = new Date().toISOString();

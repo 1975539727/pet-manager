@@ -144,17 +144,24 @@ const UserInfo = styled.div`
   gap: 0.5rem;
 `;
 
-const UserAvatar = styled.div`
+const UserAvatar = styled.div<{ $hasImage: boolean }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 600;
   font-size: 14px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const UserName = styled.span`
@@ -282,14 +289,29 @@ export default function Navbar() {
 
   useEffect(() => {
     // 从 localStorage 读取用户信息
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Failed to parse user data:', error);
+    const loadUserData = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
+        }
       }
-    }
+    };
+    
+    loadUserData();
+    
+    // 监听用户资料更新事件
+    const handleUserUpdate = () => {
+      loadUserData();
+    };
+    
+    window.addEventListener('userProfileUpdated', handleUserUpdate);
+    
+    return () => {
+      window.removeEventListener('userProfileUpdated', handleUserUpdate);
+    };
   }, []);
 
   // 点击外部关闭下拉菜单
@@ -373,8 +395,12 @@ export default function Navbar() {
                 >
                   <UserInfo>
                     <WelcomeText>欢迎回来，</WelcomeText>
-                    <UserAvatar>
-                      {getUserInitial(user.username || user.full_name)}
+                    <UserAvatar $hasImage={!!user.avatar_url}>
+                      {user.avatar_url ? (
+                        <img src={user.avatar_url} alt="用户头像" />
+                      ) : (
+                        getUserInitial(user.username || user.full_name)
+                      )}
                     </UserAvatar>
                     <UserName>{user.username || user.full_name || '用户'}</UserName>
                     <ChevronDown size={16} />

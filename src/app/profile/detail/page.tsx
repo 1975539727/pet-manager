@@ -60,10 +60,10 @@ const ProfileCard = styled.div`
   position: relative;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ $hasImage: boolean }>`
   width: 4.5rem;
   height: 4.5rem;
-  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -71,6 +71,13 @@ const Avatar = styled.div`
   color: white;
   font-size: 2rem;
   flex-shrink: 0;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const AvatarIcon = styled.div`
@@ -279,10 +286,14 @@ export default function ProfileDetailPage() {
       <Content>
         {/* 用户信息卡片 */}
         <ProfileCard>
-          <Avatar>
-            <AvatarIcon>
-              <User size={28} />
-            </AvatarIcon>
+          <Avatar $hasImage={!!user.avatar_url}>
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt="用户头像" />
+            ) : (
+              <AvatarIcon>
+                <User size={28} />
+              </AvatarIcon>
+            )}
           </Avatar>
           <UserInfoContainer>
             <UserName>{displayName}</UserName>
