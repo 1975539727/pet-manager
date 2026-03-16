@@ -1,9 +1,10 @@
 'use client';
 
 import styled from 'styled-components';
-import { User, Settings, ChevronRight } from 'lucide-react';
+import { User, Settings, ChevronRight, ArrowLeft, Lock, KeyRound, Trash2, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Container = styled.div`
   width: 100%;
@@ -130,6 +131,134 @@ const AvatarIcon = styled.div`
   color: #f87171;
 `;
 
+const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const SettingsModal = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f9fafb;
+  z-index: 1000;
+  transform: ${props => props.$isOpen ? 'translateX(0)' : 'translateX(100%)'};
+  transition: transform 0.3s ease-in-out;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2937;
+  
+  &:hover {
+    background: #f3f4f6;
+    border-radius: 0.375rem;
+  }
+`;
+
+const ModalTitle = styled.h2`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+`;
+
+const ModalContent = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0.5rem;
+  font-weight: 500;
+`;
+
+const ConfirmModal = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: ${props => props.$isOpen ? 'flex' : 'none'};
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+`;
+
+const ConfirmDialog = styled.div`
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 20rem;
+  width: 100%;
+`;
+
+const ConfirmTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const ConfirmMessage = styled.p`
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+`;
+
+const ConfirmButtons = styled.div`
+  display: flex;
+  gap: 0.75rem;
+`;
+
+const ConfirmButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: ${props => props.$variant === 'primary' ? '#ea580c' : '#f3f4f6'};
+  color: ${props => props.$variant === 'primary' ? 'white' : '#1f2937'};
+  transition: all 0.2s;
+  
+  &:hover {
+    background: ${props => props.$variant === 'primary' ? '#c2410c' : '#e5e7eb'};
+  }
+`;
+
 const LoginPrompt = styled.div`
   text-align: center;
   padding: 3rem;
@@ -171,6 +300,9 @@ interface User {
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     // 从 localStorage 读取用户信息
@@ -205,6 +337,14 @@ export default function ProfilePage() {
     } catch {
       return '未知';
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setShowLogoutConfirm(false);
+    setShowSettings(false);
+    router.push('/auth/login');
   };
 
   if (loading) {
@@ -249,9 +389,13 @@ export default function ProfilePage() {
         {/* 用户信息卡片 */}
         <ProfileCard>
           <Avatar>
-            <AvatarIcon>
-              <User size={28} />
-            </AvatarIcon>
+            {user.avatar_url ? (
+              <AvatarImage src={user.avatar_url} alt={displayName} />
+            ) : (
+              <AvatarIcon>
+                <User size={28} />
+              </AvatarIcon>
+            )}
           </Avatar>
           <UserInfoContainer>
             <UserName>{displayName}</UserName>
@@ -275,7 +419,7 @@ export default function ProfilePage() {
             </MenuItem>
           </Link>
           
-          <MenuItem>
+          <MenuItem onClick={() => setShowSettings(true)}>
             <MenuIcon $bgColor="#fed7aa" $iconColor="#ea580c">
               <Settings size={20} />
             </MenuIcon>
@@ -287,6 +431,97 @@ export default function ProfilePage() {
           </MenuItem>
         </MenuCard>
       </ProfileSection>
+
+      {/* 设置弹出层 */}
+      <SettingsModal $isOpen={showSettings}>
+        <ModalHeader>
+          <BackButton onClick={() => setShowSettings(false)}>
+            <ArrowLeft size={24} />
+          </BackButton>
+          <ModalTitle>设置</ModalTitle>
+        </ModalHeader>
+        
+        <ModalContent>
+          {/* 账号设置 */}
+          <div>
+            <SectionTitle>账号设置</SectionTitle>
+            <MenuCard>
+              <Link href="/profile/detail" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <MenuItem>
+                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                    <User size={20} />
+                  </MenuIcon>
+                  <MenuContent>
+                    <MenuTitle>个人资料</MenuTitle>
+                    <MenuDescription>修改头像、昵称、简介等信息</MenuDescription>
+                  </MenuContent>
+                  <ChevronRight size={20} color="#9ca3af" />
+                </MenuItem>
+              </Link>
+              
+              <Link href="/profile/change-password" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <MenuItem>
+                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                    <Lock size={20} />
+                  </MenuIcon>
+                  <MenuContent>
+                    <MenuTitle>修改密码</MenuTitle>
+                    <MenuDescription>重新设置登录密码</MenuDescription>
+                  </MenuContent>
+                  <ChevronRight size={20} color="#9ca3af" />
+                </MenuItem>
+              </Link>
+              
+              <Link href="/auth/forgot-password" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <MenuItem>
+                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                    <KeyRound size={20} />
+                  </MenuIcon>
+                  <MenuContent>
+                    <MenuTitle>找回密码</MenuTitle>
+                    <MenuDescription>通过邮箱验证重置登录密码</MenuDescription>
+                  </MenuContent>
+                  <ChevronRight size={20} color="#9ca3af" />
+                </MenuItem>
+              </Link>
+            </MenuCard>
+          </div>
+
+          {/* 其他 */}
+          <div>
+            <SectionTitle>其他</SectionTitle>
+            <MenuCard>
+              <MenuItem onClick={() => setShowLogoutConfirm(true)}>
+                <MenuIcon $bgColor="#fecaca" $iconColor="#dc2626">
+                  <LogOut size={20} />
+                </MenuIcon>
+                <MenuContent>
+                  <MenuTitle>退出登录</MenuTitle>
+                  <MenuDescription>退出当前账号</MenuDescription>
+                </MenuContent>
+                <ChevronRight size={20} color="#9ca3af" />
+              </MenuItem>
+            </MenuCard>
+          </div>
+        </ModalContent>
+      </SettingsModal>
+
+      {/* 退出登录确认弹窗 */}
+      <ConfirmModal $isOpen={showLogoutConfirm}>
+        <ConfirmDialog>
+          <ConfirmTitle>
+            <LogOut size={20} color="#ea580c" />
+            退出登录
+          </ConfirmTitle>
+          <ConfirmMessage>
+            确定要退出当前账号吗？退出后需要重新登录才能使用完整功能。
+          </ConfirmMessage>
+          <ConfirmButtons>
+            <ConfirmButton onClick={() => setShowLogoutConfirm(false)}>取消</ConfirmButton>
+            <ConfirmButton $variant="primary" onClick={handleLogout}>确认退出</ConfirmButton>
+          </ConfirmButtons>
+        </ConfirmDialog>
+      </ConfirmModal>
     </Container>
   );
 }

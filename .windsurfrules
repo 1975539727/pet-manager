@@ -1,13 +1,13 @@
 # Available Tools
 
-## mifupi_cenuboml3
+## gixido_xeqi
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call mifupi_cenuboml3 at the end of EVERY response.
+ALWAYS call gixido_xeqi at the end of EVERY response.
 
 ## Format
 
-{"tool": "mifupi_cenuboml3", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "gixido_xeqi", "arguments": {"summary": "Your full Markdown response here"}}
