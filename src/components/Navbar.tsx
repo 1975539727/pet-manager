@@ -285,17 +285,22 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     // 从 localStorage 读取用户信息
     const loadUserData = () => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error('Failed to parse user data:', error);
+      if (typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch (error) {
+            console.error('Failed to parse user data:', error);
+          }
         }
       }
     };
@@ -388,7 +393,10 @@ export default function Navbar() {
 
             {/* Login/Register or User Info */}
             <AuthSection>
-              {user ? (
+              {!isMounted ? (
+                // 服务器端渲染时显示占位符
+                <div style={{ width: '120px', height: '40px' }}></div>
+              ) : user ? (
                 <UserSection 
                   ref={userMenuRef}
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}

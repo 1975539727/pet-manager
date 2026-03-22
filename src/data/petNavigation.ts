@@ -61,16 +61,16 @@ export const petCategories: PetCategory[] = [
       { id: 'abyssinian', name: '阿比西尼亚猫', icon: '/images/pets/abyssinian.jpg', category: 'cat' },
       { id: 'oriental_shorthair', name: '东方短毛猫', icon: '/images/pets/oriental_shorthair.jpg', category: 'cat' },
       { id: 'selkirk_rex', name: '塞尔凯克卷毛猫', icon: '/images/pets/selkirk_rex.jpg', category: 'cat' },
-      { id: 'exotic_shorthair', name: '异国短毛猫', icon: '🐱', category: 'cat' },
+      { id: 'exotic_shorthair', name: '异国短毛猫', icon: '/images/pets/exotic_shorthair.jpg', category: 'cat' },
       // 第二行
-      { id: 'lykoi', name: '墨文森毛猫', icon: '🐈', category: 'cat' },
-      { id: 'cornish_rex', name: '康沃斯', icon: '🐈', category: 'cat' },
-      { id: 'ragdoll', name: '布偶猫', icon: '🐈', category: 'cat' },
-      { id: 'devon_rex', name: '德文森林猫', icon: '🐱', category: 'cat' },
-      { id: 'exotic_longhair', name: '异短袖猫', icon: '🐈', category: 'cat' },
-      { id: 'persian', name: '波斯猫', icon: '🐱', category: 'cat' },
-      { id: 'scottish_fold', name: '苏格兰折耳猫', icon: '🐈', category: 'cat' },
-      { id: 'turkish_angora', name: '土耳其安哥拉猫', icon: '🐱', category: 'cat' }
+      { id: 'lykoi', name: '狼猫', icon: '/images/pets/lykoi.jpg', category: 'cat' },
+      { id: 'cornish_rex', name: '柯尼斯卷毛猫', icon: '/images/pets/cornish_rex.jpg', category: 'cat' },
+      { id: 'ragdoll', name: '布偶猫', icon: '/images/pets/ragdoll.jpg', category: 'cat' },
+      { id: 'devon_rex', name: '德文卷毛猫', icon: '/images/pets/devon_rex.jpg', category: 'cat' },
+      { id: 'exotic_longhair', name: '异国长毛猫', icon: '/images/pets/exotic_longhair.jpg', category: 'cat' },
+      { id: 'persian', name: '波斯猫', icon: '/images/pets/persian.jpg', category: 'cat' },
+      { id: 'scottish_fold', name: '苏格兰折耳猫', icon: '/images/pets/scottish_fold.jpg', category: 'cat' },
+      { id: 'turkish_angora', name: '土耳其安哥拉猫', icon: '/images/pets/turkish_angora.jpg', category: 'cat' }
     ]
   },
   {
