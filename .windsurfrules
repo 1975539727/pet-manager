@@ -1,13 +1,13 @@
 # Available Tools
 
-## gixido_xeqi
+## gajilod_jolihif
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call gixido_xeqi at the end of EVERY response.
+ALWAYS call gajilod_jolihif at the end of EVERY response.
 
 ## Format
 
-{"tool": "gixido_xeqi", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "gajilod_jolihif", "arguments": {"summary": "Your full Markdown response here"}}

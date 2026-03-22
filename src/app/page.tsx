@@ -90,6 +90,13 @@ const BreedIcon = styled.div`
   font-size: 36px;
   margin-bottom: 8px;
   box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const BreedName = styled.div`
@@ -155,7 +162,13 @@ export default function Home() {
         <BreedsGrid>
           {currentCategory?.breeds.map((breed) => (
             <BreedCard key={breed.id} onClick={() => handlePetClick(breed.id)}>
-              <BreedIcon>{breed.icon}</BreedIcon>
+              <BreedIcon>
+                {breed.icon.startsWith('/') ? (
+                  <img src={breed.icon} alt={breed.name} />
+                ) : (
+                  breed.icon
+                )}
+              </BreedIcon>
               <BreedName>{breed.name}</BreedName>
               <BreedDetails>
                 <DetailItem>百科</DetailItem>
