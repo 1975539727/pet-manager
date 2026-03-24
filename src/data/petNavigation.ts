@@ -79,24 +79,24 @@ export const petCategories: PetCategory[] = [
     isActive: false,
     breeds: [
       // 第一行
-      { id: 'hamster', name: '仓鼠', icon: '🐹', category: 'small' },
-      { id: 'guinea_pig', name: '豚鼠', icon: '🐭', category: 'small' },
-      { id: 'netherland_dwarf', name: '荷兰侏儒兔', icon: '🐰', category: 'small' },
-      { id: 'lop_rabbit', name: '垂耳兔', icon: '🐇', category: 'small' },
-      { id: 'squirrel', name: '松鼠', icon: '🐿️', category: 'small' },
+      { id: 'hamster', name: '仓鼠', icon: '/images/pets/hamster.jpg', category: 'small' },
+      { id: 'guinea_pig', name: '豚鼠', icon: '/images/pets/guinea_pig.jpg', category: 'small' },
+      { id: 'netherland_dwarf', name: '荷兰侏儒兔', icon: '/images/pets/netherland_dwarf.jpg', category: 'small' },
+      { id: 'lop_rabbit', name: '垂耳兔', icon: '/images/pets/lop_rabbit.jpg', category: 'small' },
+      { id: 'squirrel', name: '松鼠', icon: '/images/pets/squirrel.jpg', category: 'small' },
       { id: 'sea_rabbit', name: '海星兔', icon: '🐰', category: 'small' },
-      { id: 'angora_rabbit', name: '安哥拉兔', icon: '🐇', category: 'small' },
-      { id: 'hedgehog', name: '刺猬', icon: '🦔', category: 'small' },
-      { id: 'golden_hamster', name: '黄金仓鼠', icon: '🐹', category: 'small' },
+      { id: 'angora_rabbit', name: '安哥拉兔', icon: '/images/pets/angora_rabbit.jpeg', category: 'small' },
+      { id: 'hedgehog', name: '刺猬', icon: '/images/pets/hedgehog.jpg', category: 'small' },
+      { id: 'golden_hamster', name: '黄金仓鼠', icon: '/images/pets/golden_hamster.jpg', category: 'small' },
       // 第二行
-      { id: 'chinchilla_small', name: '毛丝鼠', icon: '🐭', category: 'small' },
-      { id: 'mini_pig', name: '小雪猪', icon: '🐷', category: 'small' },
-      { id: 'sugar_glider', name: '蜜袋鼯', icon: '🐨', category: 'small' },
-      { id: 'djungarian_hamster', name: '仓仓鼠', icon: '🐹', category: 'small' },
-      { id: 'campbell_hamster', name: '加卡利亚仓鼠', icon: '🐭', category: 'small' },
-      { id: 'fancy_rat', name: '花枝鼠', icon: '🐀', category: 'small' },
-      { id: 'roborovski_hamster', name: '罗伯罗夫斯基仓鼠', icon: '🐹', category: 'small' },
-      { id: 'dwarf_rabbit', name: '多瓦夫兔', icon: '🐇', category: 'small' }
+      { id: 'chinchilla_small', name: '毛丝鼠', icon: '/images/pets/chinchilla_small.jpg', category: 'small' },
+      { id: 'mini_pig', name: '巴马香猪', icon: '/images/pets/mini_pig.png', category: 'small' },
+      { id: 'sugar_glider', name: '蜜袋鼯', icon: '/images/pets/sugar_glider.jpg', category: 'small' },
+      { id: 'djungarian_hamster', name: '仓仓鼠', icon: '/images/pets/djungarian_hamster.jpg', category: 'small' },
+      { id: 'campbell_hamster', name: '加卡利亚仓鼠', icon: '/images/pets/campbell_hamster.jpeg', category: 'small' },
+      { id: 'fancy_rat', name: '花枝鼠', icon: '/images/pets/fancy_rat.jpg', category: 'small' },
+      { id: 'roborovski_hamster', name: '罗伯罗夫斯基仓鼠', icon: '/images/pets/roborovski_hamster.jpg', category: 'small' },
+      { id: 'dwarf_rabbit', name: '多瓦夫兔', icon: '/images/pets/dwarf_rabbit.jpg', category: 'small' }
     ]
   },
   {
@@ -105,24 +105,24 @@ export const petCategories: PetCategory[] = [
     isActive: false,
     breeds: [
       // 第一行
-      { id: 'koi', name: '锦鲤', icon: '🐟', category: 'aquatic' },
-      { id: 'arowana', name: '龙鱼', icon: '🐠', category: 'aquatic' },
-      { id: 'clownfish', name: '小丑鱼', icon: '🐠', category: 'aquatic' },
-      { id: 'betta', name: '斗鱼', icon: '🐟', category: 'aquatic' },
-      { id: 'flowerhorn', name: '罗汉鱼', icon: '🐠', category: 'aquatic' },
-      { id: 'parrotfish', name: '鹦鹉鱼', icon: '🐟', category: 'aquatic' },
-      { id: 'silver_dollar', name: '金钱鱼', icon: '🐠', category: 'aquatic' },
-      { id: 'golden_crab', name: '金层蟹', icon: '🦀', category: 'aquatic' },
-      { id: 'brazilian_turtle', name: '巴西彩龟', icon: '🐢', category: 'aquatic' },
+      { id: 'koi', name: '锦鲤', icon: '/images/pets/koi.jpg', category: 'aquatic' },
+      { id: 'arowana', name: '龙鱼', icon: '/images/pets/arowana.jpg', category: 'aquatic' },
+      { id: 'clownfish', name: '小丑鱼', icon: '/images/pets/clownfish.jpg', category: 'aquatic' },
+      { id: 'betta', name: '斗鱼', icon: '/images/pets/betta.jpg', category: 'aquatic' },
+      { id: 'flowerhorn', name: '罗汉鱼', icon: '/images/pets/flowerhorn.jpg', category: 'aquatic' },
+      { id: 'parrotfish', name: '鹦鹉鱼', icon: '/images/pets/parrotfish.jpg', category: 'aquatic' },
+      { id: 'silver_dollar', name: '金钱鱼', icon: '/images/pets/silver_dollar.jpg', category: 'aquatic' },
+      { id: 'golden_crab', name: '辣椒蟹', icon: '/images/pets/golden_crab.jpg', category: 'aquatic' },
+      { id: 'brazilian_turtle', name: '巴西彩龟', icon: '/images/pets/brazilian_turtle.png', category: 'aquatic' },
       // 第二行
-      { id: 'seahorse', name: '体像海马', icon: '🐠', category: 'aquatic' },
-      { id: 'sea_urchin', name: '海胆', icon: '🦔', category: 'aquatic' },
-      { id: 'pea_crab', name: '豌豆蟹', icon: '🦀', category: 'aquatic' },
-      { id: 'ceramic_fish', name: '核体慢虾陶鱼', icon: '🐟', category: 'aquatic' },
-      { id: 'crystal_shrimp', name: '戴氏琥珀虾', icon: '🦐', category: 'aquatic' },
-      { id: 'razorfish', name: '剧刀鱼', icon: '🐠', category: 'aquatic' },
-      { id: 'peacock_eel', name: '孔雀花鳗', icon: '🐟', category: 'aquatic' },
-      { id: 'goldfish', name: '金鱼', icon: '🐠', category: 'aquatic' }
+      { id: 'seahorse', name: '海马', icon: '/images/pets/seahorse.jpg', category: 'aquatic' },
+      { id: 'sea_urchin', name: '海胆', icon: '/images/pets/sea_urchin.jpg', category: 'aquatic' },
+      { id: 'pea_crab', name: '豌豆蟹', icon: '/images/pets/pea_crab.jpg', category: 'aquatic' },
+      { id: 'ceramic_fish', name: '海水神仙鱼', icon: '/images/pets/ceramic_fish.jpg', category: 'aquatic' },
+      { id: 'crystal_shrimp', name: '戴氏琥珀虾', icon: '/images/pets/crystal_shrimp.jpg', category: 'aquatic' },
+      { id: 'razorfish', name: '条纹虾鱼', icon: '/images/pets/razorfish.jpg', category: 'aquatic' },
+      { id: 'peacock_eel', name: '孔雀刺鳅', icon: '/images/pets/peacock_eel.png', category: 'aquatic' },
+      { id: 'goldfish', name: '金鱼', icon: '/images/pets/goldfish.jpg', category: 'aquatic' }
     ]
   },
   {
@@ -131,24 +131,24 @@ export const petCategories: PetCategory[] = [
     isActive: false,
     breeds: [
       // 第一行
-      { id: 'bearded_dragon', name: '鬃狮龙蜥', icon: '🦎', category: 'reptile' },
-      { id: 'black_mamba', name: '黑曼巴蛇', icon: '🐍', category: 'reptile' },
-      { id: 'chameleon', name: '变色龙', icon: '🦎', category: 'reptile' },
-      { id: 'red_eye_tree_frog', name: '红眼树蛙蛤', icon: '🐸', category: 'reptile' },
-      { id: 'mexican_redknee', name: '墨西哥红膝头', icon: '🕷️', category: 'reptile' },
-      { id: 'bamboo_viper', name: '竹叶蛇', icon: '🐍', category: 'reptile' },
-      { id: 'red_scorpion', name: '多红蝎', icon: '🦂', category: 'reptile' },
-      { id: 'burmese_python', name: '洲蝉拉斯蚺蛇', icon: '🐍', category: 'reptile' },
-      { id: 'leopard_gecko', name: '豹纹蛇', icon: '🦎', category: 'reptile' },
+      { id: 'bearded_dragon', name: '鬃狮蜥', icon: '/images/pets/bearded_dragon.jpg', category: 'reptile' },
+      { id: 'black_mamba', name: '黑曼巴蛇', icon: '/images/pets/black_mamba.jpg', category: 'reptile' },
+      { id: 'chameleon', name: '变色龙', icon: '/images/pets/chameleon.jpg', category: 'reptile' },
+      { id: 'red_eye_tree_frog', name: '红眼树蛙', icon: '/images/pets/red_eye_tree_frog.png', category: 'reptile' },
+      { id: 'mexican_redknee', name: '墨西哥红膝鸟蛛', icon: '/images/pets/mexican_redknee.jpg', category: 'reptile' },
+      { id: 'bamboo_viper', name: '竹叶蛇', icon: '/images/pets/bamboo_viper.jpg', category: 'reptile' },
+      { id: 'red_scorpion', name: '亚洲雨林蝎', icon: '/images/pets/red_scorpion.jpg', category: 'reptile' },
+      { id: 'burmese_python', name: '缅甸蟒', icon: '/images/pets/burmese_python.jpg', category: 'reptile' },
+      { id: 'leopard_gecko', name: '豹纹蛇', icon: '/images/pets/leopard_gecko.jpg', category: 'reptile' },
       // 第二行
-      { id: 'water_monitor', name: '水巨蜥', icon: '🦎', category: 'reptile' },
-      { id: 'three_line_snake', name: '三蛇晰', icon: '🐍', category: 'reptile' },
-      { id: 'anaconda', name: '水蚺', icon: '🐍', category: 'reptile' },
-      { id: 'pig_nose', name: '猪鼻', icon: '🐢', category: 'reptile' },
-      { id: 'albino_python', name: '白化林蚺', icon: '🐍', category: 'reptile' },
-      { id: 'tokay_gecko', name: '约克守宫', icon: '🦎', category: 'reptile' },
-      { id: 'corn_snake', name: '玉米蛇', icon: '🐍', category: 'reptile' },
-      { id: 'green_tree_python', name: '雨林蟒', icon: '🐍', category: 'reptile' }
+      { id: 'water_monitor', name: '水巨蜥', icon: '/images/pets/water_monitor.jpg', category: 'reptile' },
+      { id: 'three_line_snake', name: '红点锦蛇', icon: '/images/pets/three_line_snake.jpg', category: 'reptile' },
+      { id: 'anaconda', name: '水蚺', icon: '/images/pets/anaconda.jpg', category: 'reptile' },
+      { id: 'pig_nose', name: '猪鼻龟', icon: '/images/pets/pig_nose.jpg', category: 'reptile' },
+      { id: 'albino_python', name: '白化林蚺', icon: '/images/pets/albino_python.jpeg', category: 'reptile' },
+      { id: 'tokay_gecko', name: '蛤蚧', icon: '/images/pets/tokay_gecko.jpeg', category: 'reptile' },
+      { id: 'corn_snake', name: '玉米蛇', icon: '/images/pets/corn_snake.jpg', category: 'reptile' },
+      { id: 'green_tree_python', name: '绿树蟒', icon: '/images/pets/green_tree_python.jpeg', category: 'reptile' }
     ]
   }
 ];
