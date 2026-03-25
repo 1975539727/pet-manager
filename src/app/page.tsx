@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { Heart, BookOpen, FileText, Bot, Plus } from "lucide-react";
+import { Heart, BookOpen, FileText, Bot } from "lucide-react";
 import styled from 'styled-components';
 import { useState } from 'react';
 import { petCategories, PetCategory } from '@/data/petNavigation';
@@ -120,15 +120,6 @@ const DetailItem = styled.span`
   border-radius: 10px;
 `;
 
-const AddMoreCard = styled(BreedCard)`
-  opacity: 0.6;
-
-  ${BreedIcon} {
-    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-`;
-
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('dog');
   const router = useRouter();
@@ -177,16 +168,6 @@ export default function Home() {
               </BreedDetails>
             </BreedCard>
           ))}
-          
-          <AddMoreCard>
-            <BreedIcon>
-              <Plus size={24} color="#888" />
-            </BreedIcon>
-            <BreedName>更多</BreedName>
-            <BreedDetails>
-              <DetailItem>敬请期待</DetailItem>
-            </BreedDetails>
-          </AddMoreCard>
         </BreedsGrid>
       </PetNavigationContainer>
     </Container>

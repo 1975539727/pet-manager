@@ -97,3 +97,71 @@ export const chatStream = async (
     onError(error instanceof Error ? error : new Error('Unknown error'));
   }
 };
+
+/**
+ * 非流式聊天响应类型
+ */
+export interface ChatNonStreamResponse {
+  content: string;
+  model?: string;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
+}
+
+/**
+ * 非流式聊天 API - 用于食物查询等场景
+ * 直接等待完整结果返回，不使用流式输出
+ */
+export const chatNonStream = async (
+  messages: Message[],
+  api_url?: string,
+  api_key?: string,
+  model: string = 'GLM-4.7'
+): Promise<ChatNonStreamResponse> => {
+  const baseUrl = api_url || process.env.NEXT_PUBLIC_ANTHROPIC_BASE_URL;
+  const authToken = api_key || process.env.NEXT_PUBLIC_ANTHROPIC_AUTH_TOKEN;
+
+  if (!baseUrl || !authToken) {
+    throw new Error('缺少 API URL 或 API Key');
+  }
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authToken,
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        stream: false, // 禁用流式输出
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    // 提取内容 - 支持不同的 API 响应格式
+    const content = 
+      data?.choices?.[0]?.message?.content || 
+      data?.message?.content ||
+      data?.content ||
+      '';
+
+    return {
+      content,
+      model: data?.model,
+      usage: data?.usage,
+    };
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('未知错误');
+  }
+};

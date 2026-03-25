@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Heart, Share, BookOpen, FileText, Bot, User, Home, Zap } from 'lucide-react';
+import { ArrowLeft, Heart, Share, BookOpen, FileText, Bot, User, Home, Zap, Utensils, Search, X } from 'lucide-react';
 import styled from 'styled-components';
 import { getPetFullInfo } from '@/lib/api/pets';
 import { FullPetInfo } from '@/lib/supabase';
@@ -178,16 +178,227 @@ const SectionContent = styled.div`
   }
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+`;
+
+const ModalContent = styled.div`
+  background: #fef7ed;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+`;
+
+const ModalIconWrapper = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #8b7aff, #6b5bff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+`;
+
+const PetTag = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 16px;
+  margin-bottom: 24px;
+`;
+
+const PetTagIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ff9a85, #ff6b35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+`;
+
+const PetTagText = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ModalDescription = styled.p`
+  color: #999;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+`;
+
+const InputLabel = styled.label`
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  margin-bottom: 24px;
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b5bff;
+  display: flex;
+  align-items: center;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.2s;
+  background: white;
+
+  &::placeholder {
+    color: #ccc;
+  }
+
+  &:focus {
+    border-color: #6b5bff;
+  }
+`;
+
+const ModalActions = styled.div`
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+`;
+
+const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'variant'
+})<{ variant?: 'primary' | 'secondary' }>`
+  padding: 14px 32px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ${props => props.variant === 'primary' ? `
+    background: linear-gradient(135deg, #8b7aff, #6b5bff);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, #7a69ee, #5a4bee);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3);
+    }
+  ` : `
+    background: transparent;
+    color: #666;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  `}
+`;
+
+const SectionButton = styled.button`
+  margin-top: 16px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #8b7aff, #6b5bff);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: linear-gradient(135deg, #7a69ee, #5a4bee);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3);
+  }
+`;
+
 export default function PetDetailPage() {
   const params = useParams<{ category: string; id: string }>();
   const [petInfo, setPetInfo] = useState<FullPetInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDietModal, setShowDietModal] = useState(false);
+  const [foodInput, setFoodInput] = useState('');
 
   useEffect(() => {
     async function loadPetData() {
       setLoading(true);
       try {
-        const data = await getPetFullInfo(params.id);
+        const data = await getPetFullInfo(params?.id || '');
         console.log(data);
         setPetInfo(data);
       } catch (error) {
@@ -197,10 +408,10 @@ export default function PetDetailPage() {
       }
     }
 
-    if (params.id) {
+    if (params?.id) {
       loadPetData();
     }
-  }, [params.id]);
+  }, [params?.id]);
 
   if (loading) {
     return (
@@ -345,6 +556,10 @@ export default function PetDetailPage() {
                   </>
                 )}
               </ul>
+              <SectionButton onClick={() => setShowDietModal(true)}>
+                <Utensils size={18} />
+                智能饮食查询
+              </SectionButton>
             </SectionContent>
           </Section>
 
@@ -402,22 +617,68 @@ export default function PetDetailPage() {
                   </>
                 )}
               </ul>
-              <button style={{
-                marginTop: '16px',
-                padding: '12px 24px',
-                background: '#ff6b35',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '500'
-              }}>
+              <SectionButton style={{ background: 'linear-gradient(135deg, #ff9a85, #ff6b35)' }}>
+                <Bot size={18} />
                 开始咨询
-              </button>
+              </SectionButton>
             </SectionContent>
           </Section>
         </SectionGrid>
       </MainContent>
+
+      {showDietModal && (
+        <ModalOverlay onClick={() => setShowDietModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CloseButton onClick={() => setShowDietModal(false)}>
+              <X size={20} />
+            </CloseButton>
+            
+            <ModalHeader>
+              <ModalIconWrapper>
+                <Utensils size={24} />
+              </ModalIconWrapper>
+              <ModalTitle>智能饮食查询</ModalTitle>
+            </ModalHeader>
+
+            <PetTag>
+              <PetTagIcon>{petInfo?.icon || '🐾'}</PetTagIcon>
+              <PetTagText>{petInfo?.name} ({petInfo?.category.name})</PetTagText>
+            </PetTag>
+
+            <ModalDescription>
+              输入想确认的食物，我们会以专业兽医视角提供是否适合这只宠物食用的建议。
+            </ModalDescription>
+
+            <InputLabel>食物名称</InputLabel>
+            <InputWrapper>
+              <SearchIcon>
+                <Search size={20} />
+              </SearchIcon>
+              <Input
+                type="text"
+                placeholder="例如：苹果、巧克力"
+                value={foodInput}
+                onChange={(e) => setFoodInput(e.target.value)}
+              />
+            </InputWrapper>
+
+            <ModalActions>
+              <Button variant="secondary" onClick={() => setShowDietModal(false)}>
+                取消
+              </Button>
+              <Button variant="primary" onClick={() => {
+                // TODO: 实现查询逻辑
+                console.log('查询食物:', foodInput);
+                setShowDietModal(false);
+                setFoodInput('');
+              }}>
+                <Search size={18} />
+                立即查询
+              </Button>
+            </ModalActions>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </Container>
   );
 }

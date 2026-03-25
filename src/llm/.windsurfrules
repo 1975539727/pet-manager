@@ -1,13 +1,13 @@
 # Available Tools
 
-## puqomez_lomuri
+## pugama_ludasala3
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call puqomez_lomuri at the end of EVERY response.
+ALWAYS call pugama_ludasala3 at the end of EVERY response.
 
 ## Format
 
-{"tool": "puqomez_lomuri", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "pugama_ludasala3", "arguments": {"summary": "Your full Markdown response here"}}
