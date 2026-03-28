@@ -7,6 +7,7 @@ import { ArrowLeft, Heart, Share, BookOpen, FileText, Bot, User, Home, Zap, Uten
 import styled from 'styled-components';
 import { getPetFullInfo } from '@/lib/api/pets';
 import { FullPetInfo } from '@/lib/supabase';
+import { petCategories } from '@/data/petNavigation';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -98,6 +99,13 @@ const PetIcon = styled.div`
   justify-content: center;
   font-size: 60px;
   box-shadow: 0 8px 30px rgba(255,107,53,0.4);
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const PetInfo = styled.div`
@@ -269,6 +277,13 @@ const PetTagIcon = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const PetTagText = styled.span`
@@ -400,6 +415,18 @@ export default function PetDetailPage() {
       try {
         const data = await getPetFullInfo(params?.id || '');
         console.log(data);
+        
+        // 如果数据库中的icon不是图片路径，从petNavigation中查找
+        if (data && data.icon && !data.icon.startsWith('/')) {
+          const category = petCategories.find(cat => cat.id === params?.category);
+          if (category) {
+            const breed = category.breeds.find(b => b.id === params?.id);
+            if (breed && breed.icon) {
+              data.icon = breed.icon;
+            }
+          }
+        }
+        
         setPetInfo(data);
       } catch (error) {
         console.error('获取宠物信息失败:', error);
@@ -411,7 +438,7 @@ export default function PetDetailPage() {
     if (params?.id) {
       loadPetData();
     }
-  }, [params?.id]);
+  }, [params?.id, params?.category]);
 
   if (loading) {
     return (
@@ -484,7 +511,13 @@ export default function PetDetailPage() {
 
       <MainContent>
         <PetHero>
-          <PetIcon>{petInfo.icon || '🐾'}</PetIcon>
+          <PetIcon>
+            {petInfo.icon && petInfo.icon.startsWith('/') ? (
+              <img src={petInfo.icon} alt={petInfo.name} />
+            ) : (
+              petInfo.icon || '🐾'
+            )}
+          </PetIcon>
           <PetInfo>
             <PetName>{petInfo.name}</PetName>
             <PetCategory>{petInfo.category.name}</PetCategory>
@@ -641,7 +674,13 @@ export default function PetDetailPage() {
             </ModalHeader>
 
             <PetTag>
-              <PetTagIcon>{petInfo?.icon || '🐾'}</PetTagIcon>
+              <PetTagIcon>
+                {petInfo?.icon && petInfo.icon.startsWith('/') ? (
+                  <img src={petInfo.icon} alt={petInfo.name} />
+                ) : (
+                  petInfo?.icon || '🐾'
+                )}
+              </PetTagIcon>
               <PetTagText>{petInfo?.name} ({petInfo?.category.name})</PetTagText>
             </PetTag>
 
