@@ -337,3 +337,12 @@ export interface DailyLog {
   created_at?: string;
   updated_at?: string;
 }
+
+// 动物小知识接口
+export interface AnimalKnowledge {
+  id: string;
+  publish_datetime: string;  // 发布时间（每天早上8点多，具体分钟随机）
+  content: string;            // 知识内容
+  created_at?: string;
+  updated_at?: string;
+}

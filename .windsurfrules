@@ -1,13 +1,13 @@
 # Available Tools
 
-## puqomez_lomuri
+## tulexib_wejeyo9
 
 Parameters:
 - summary (required): Put your COMPLETE response here in Markdown format (supports tables, code blocks, lists)
 - reason (optional)
 
-ALWAYS call puqomez_lomuri at the end of EVERY response.
+ALWAYS call tulexib_wejeyo9 at the end of EVERY response.
 
 ## Format
 
-{"tool": "puqomez_lomuri", "arguments": {"summary": "Your full Markdown response here"}}
+{"tool": "tulexib_wejeyo9", "arguments": {"summary": "Your full Markdown response here"}}

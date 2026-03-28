@@ -366,9 +366,6 @@ export default function Navbar() {
               <Link href="/">
                 <NavLink>首页</NavLink>
               </Link>
-              <Link href="/encyclopedia">
-                <NavLink>宠物百科</NavLink>
-              </Link>
               <Link href="/my-pets">
                 <NavLink>我的宠物</NavLink>
               </Link>
@@ -457,9 +454,6 @@ export default function Navbar() {
       <MobileMenu>
         <Link href="/">
           <MobileMenuLink>首页</MobileMenuLink>
-        </Link>
-        <Link href="/encyclopedia">
-          <MobileMenuLink>宠物百科</MobileMenuLink>
         </Link>
         <Link href="/my-pets">
           <MobileMenuLink>我的宠物</MobileMenuLink>

@@ -864,7 +864,7 @@ export default function EditPetPage() {
               <div className="icon">🩺</div>
               <div className="text">
                 <h3>是否已绝育</h3>
-                <p>升高后绝育需求建议</p>
+                <p>开启后提供精准健康建议</p>
               </div>
             </ToggleInfo>
             <ToggleSwitch>

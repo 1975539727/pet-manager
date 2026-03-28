@@ -1015,7 +1015,10 @@ export default function MyPetsPage() {
               <h3>发现生活</h3>
             </DiscoverHeader>
             <DiscoverGrid>
-              <DiscoverCard $bgColor="#dbeafe">
+              <DiscoverCard 
+                $bgColor="#dbeafe"
+                onClick={() => router.push('/animal-knowledge')}
+              >
                 <div className="icon-wrapper">📚</div>
                 <div className="title">动物小知识</div>
                 <div className="subtitle">每日精选</div>
