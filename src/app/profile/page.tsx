@@ -9,8 +9,14 @@ import { useRouter } from 'next/navigation';
 const Container = styled.div`
   width: 100%;
   padding: 0;
-  background: #f9fafb;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   min-height: 100vh;
+  padding-top: 96px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
@@ -20,9 +26,10 @@ const Header = styled.div`
 
 const Title = styled.h1`
   font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const ProfileSection = styled.div`
@@ -33,33 +40,43 @@ const ProfileSection = styled.div`
 `;
 
 const ProfileCard = styled.div`
-  background: white;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 1.5rem;
-  border: 2px solid #000;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   display: flex;
   align-items: center;
   gap: 1rem;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #2C2420;
+  }
 `;
 
 const Avatar = styled.div`
   width: 4.5rem;
   height: 4.5rem;
-  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  background: linear-gradient(135deg, #C5A059, #782221);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
   font-size: 2rem;
   flex-shrink: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 const UserName = styled.h2`
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 0.25rem 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const UserInfoContainer = styled.div`
@@ -67,15 +84,17 @@ const UserInfoContainer = styled.div`
 `;
 
 const UserInfo = styled.p`
-  color: #6b7280;
+  color: #5D4037;
   font-size: 0.875rem;
   margin: 0.25rem 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const MenuCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  border: 2px solid #000;
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   overflow: hidden;
 `;
 
@@ -85,28 +104,30 @@ const MenuItem = styled.div`
   gap: 1rem;
   padding: 1rem 1.5rem;
   cursor: pointer;
-  transition: background-color 0.2s;
-  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.2s;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
-    background-color: #f9fafb;
+    background-color: rgba(120, 34, 33, 0.05);
   }
 `;
 
-const MenuIcon = styled.div<{ $bgColor: string; $iconColor: string }>`
+const MenuIcon = styled.div<{ $bgColor?: string; $iconColor?: string }>`
   width: 2.5rem;
   height: 2.5rem;
-  background: ${props => props.$bgColor};
-  border-radius: 0.5rem;
+  background: ${props => props.$bgColor || 'linear-gradient(135deg, #782221, #9B2C2C)'};
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.$iconColor};
+  color: ${props => props.$iconColor || '#F5F2E9'};
   flex-shrink: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const MenuContent = styled.div`
@@ -116,14 +137,16 @@ const MenuContent = styled.div`
 const MenuTitle = styled.h3`
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #2C2420;
   margin: 0 0 0.25rem 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const MenuDescription = styled.p`
-  color: #9ca3af;
+  color: #5D4037;
   font-size: 0.75rem;
   margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const AvatarIcon = styled.div`
@@ -144,7 +167,11 @@ const SettingsModal = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background: #f9fafb;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   z-index: 1000;
   transform: ${props => props.$isOpen ? 'translateX(0)' : 'translateX(100%)'};
   transition: transform 0.3s ease-in-out;
@@ -154,24 +181,28 @@ const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   position: relative;
 `;
 
 const BackButton = styled.button`
   background: none;
-  border: none;
+  border: 2px solid #2C2420;
   padding: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1f2937;
+  color: #2C2420;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    background: #f3f4f6;
-    border-radius: 0.375rem;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
@@ -180,9 +211,10 @@ const ModalTitle = styled.h2`
   left: 50%;
   transform: translateX(-50%);
   font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const ModalContent = styled.div`
@@ -194,9 +226,12 @@ const ModalContent = styled.div`
 
 const SectionTitle = styled.h3`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #5D4037;
   margin: 0 0 0.5rem 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
 const ConfirmModal = styled.div<{ $isOpen: boolean }>`
@@ -205,7 +240,7 @@ const ConfirmModal = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(44, 36, 32, 0.6);
   z-index: 2000;
   display: ${props => props.$isOpen ? 'flex' : 'none'};
   align-items: center;
@@ -214,28 +249,32 @@ const ConfirmModal = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ConfirmDialog = styled.div`
-  background: white;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 1.5rem;
   max-width: 20rem;
   width: 100%;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
 `;
 
 const ConfirmTitle = styled.h3`
   font-size: 1rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const ConfirmMessage = styled.p`
-  color: #6b7280;
+  color: #5D4037;
   font-size: 0.875rem;
   margin: 0 0 1.5rem 0;
   line-height: 1.5;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const ConfirmButtons = styled.div`
@@ -246,41 +285,56 @@ const ConfirmButtons = styled.div`
 const ConfirmButton = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   flex: 1;
   padding: 0.75rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  border: 2px solid #2C2420;
+  border-radius: 0;
+  font-weight: 600;
   cursor: pointer;
-  background: ${props => props.$variant === 'primary' ? '#ea580c' : '#f3f4f6'};
-  color: ${props => props.$variant === 'primary' ? 'white' : '#1f2937'};
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+  
+  background: ${props => props.$variant === 'primary' ? '#782221' : 'transparent'};
+  color: ${props => props.$variant === 'primary' ? '#F5F2E9' : '#2C2420'};
+  box-shadow: ${props => props.$variant === 'primary' ? '3px 3px 0px 0px #2C2420' : 'none'};
   
   &:hover {
-    background: ${props => props.$variant === 'primary' ? '#c2410c' : '#e5e7eb'};
+    ${props => props.$variant === 'primary' ? `
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px 0px #2C2420;
+    ` : `
+      background: rgba(44, 36, 32, 0.05);
+    `}
   }
 `;
 
 const LoginPrompt = styled.div`
   text-align: center;
   padding: 3rem;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  border: 1px solid #e5e7eb;
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
+  margin: 0 1rem;
 `;
 
 const LoginButton = styled.a`
   display: inline-block;
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #ea580c;
-  color: white;
-  border-radius: 0.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border-radius: 0;
   text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  transition: all 0.3s;
+  border: 2px solid #2C2420;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   &:hover {
-    background: #c2410c;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px #2C2420;
   }
 `;
 
@@ -364,7 +418,7 @@ export default function ProfilePage() {
           <Title>我的</Title>
         </Header>
         <LoginPrompt>
-          <User size={48} color="#ea580c" style={{ margin: '0 auto 1rem' }} />
+          <User size={48} color="#782221" style={{ margin: '0 auto 1rem' }} />
           <UserName>您还未登录</UserName>
           <UserInfo>登录后可以管理您的个人信息和宠物档案</UserInfo>
           <Link href="/auth/login">
@@ -408,26 +462,26 @@ export default function ProfilePage() {
         <MenuCard>
           <Link href="/profile/detail" style={{ textDecoration: 'none', color: 'inherit' }}>
             <MenuItem>
-              <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+              <MenuIcon>
                 <User size={20} />
               </MenuIcon>
               <MenuContent>
                 <MenuTitle>个人资料</MenuTitle>
                 <MenuDescription>头像、昵称、简介等</MenuDescription>
               </MenuContent>
-              <ChevronRight size={20} color="#9ca3af" />
+              <ChevronRight size={20} color="#5D4037" />
             </MenuItem>
           </Link>
           
           <MenuItem onClick={() => setShowSettings(true)}>
-            <MenuIcon $bgColor="#fed7aa" $iconColor="#ea580c">
+            <MenuIcon>
               <Settings size={20} />
             </MenuIcon>
             <MenuContent>
               <MenuTitle>设置</MenuTitle>
               <MenuDescription>账号、通知、隐私等</MenuDescription>
             </MenuContent>
-            <ChevronRight size={20} color="#9ca3af" />
+            <ChevronRight size={20} color="#5D4037" />
           </MenuItem>
         </MenuCard>
       </ProfileSection>
@@ -448,40 +502,40 @@ export default function ProfilePage() {
             <MenuCard>
               <Link href="/profile/detail" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <MenuItem>
-                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                  <MenuIcon>
                     <User size={20} />
                   </MenuIcon>
                   <MenuContent>
                     <MenuTitle>个人资料</MenuTitle>
                     <MenuDescription>修改头像、昵称、简介等信息</MenuDescription>
                   </MenuContent>
-                  <ChevronRight size={20} color="#9ca3af" />
+                  <ChevronRight size={20} color="#5D4037" />
                 </MenuItem>
               </Link>
               
               <Link href="/profile/change-password" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <MenuItem>
-                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                  <MenuIcon>
                     <Lock size={20} />
                   </MenuIcon>
                   <MenuContent>
                     <MenuTitle>修改密码</MenuTitle>
                     <MenuDescription>重新设置登录密码</MenuDescription>
                   </MenuContent>
-                  <ChevronRight size={20} color="#9ca3af" />
+                  <ChevronRight size={20} color="#5D4037" />
                 </MenuItem>
               </Link>
               
               <Link href="/auth/forgot-password" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <MenuItem>
-                  <MenuIcon $bgColor="#ddd6fe" $iconColor="#7c3aed">
+                  <MenuIcon>
                     <KeyRound size={20} />
                   </MenuIcon>
                   <MenuContent>
                     <MenuTitle>找回密码</MenuTitle>
                     <MenuDescription>通过邮箱验证重置登录密码</MenuDescription>
                   </MenuContent>
-                  <ChevronRight size={20} color="#9ca3af" />
+                  <ChevronRight size={20} color="#5D4037" />
                 </MenuItem>
               </Link>
             </MenuCard>
@@ -492,14 +546,14 @@ export default function ProfilePage() {
             <SectionTitle>其他</SectionTitle>
             <MenuCard>
               <MenuItem onClick={() => setShowLogoutConfirm(true)}>
-                <MenuIcon $bgColor="#fecaca" $iconColor="#dc2626">
+                <MenuIcon $bgColor="rgba(120, 34, 33, 0.15)" $iconColor="#782221">
                   <LogOut size={20} />
                 </MenuIcon>
                 <MenuContent>
                   <MenuTitle>退出登录</MenuTitle>
                   <MenuDescription>退出当前账号</MenuDescription>
                 </MenuContent>
-                <ChevronRight size={20} color="#9ca3af" />
+                <ChevronRight size={20} color="#5D4037" />
               </MenuItem>
             </MenuCard>
           </div>
@@ -510,7 +564,7 @@ export default function ProfilePage() {
       <ConfirmModal $isOpen={showLogoutConfirm}>
         <ConfirmDialog>
           <ConfirmTitle>
-            <LogOut size={20} color="#ea580c" />
+            <LogOut size={20} color="#782221" />
             退出登录
           </ConfirmTitle>
           <ConfirmMessage>

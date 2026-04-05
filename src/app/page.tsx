@@ -1,129 +1,205 @@
 'use client';
 
-import Link from "next/link";
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Heart, BookOpen, FileText, Bot } from "lucide-react";
 import styled from 'styled-components';
 import { useState } from 'react';
-import { petCategories, PetCategory } from '@/data/petNavigation';
+import { petCategories } from '@/data/petNavigation';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom, #fff7ed, #ffffff);
-  padding: 20px;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
+`;
+
+const CategoriesSection = styled.section`
+  padding: 112px 24px;
+  background: #EFEDE6;
 `;
 
 const PetNavigationContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  overflow: hidden;
 `;
 
 const CategoryTabs = styled.div`
   display: flex;
-  border-bottom: 1px solid #f0f0f0;
-  background: #fafafa;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
 `;
 
 const CategoryTab = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'active' && prop !== 'clickable'
 })<{ active: boolean; clickable?: boolean }>`
-  padding: 16px 24px;
+  padding: 0;
   border: none;
   background: none;
-  font-size: 16px;
-  font-weight: 500;
-  color: ${props => props.active ? '#ff6b35' : (props.clickable === false ? '#999' : '#666')};
+  font-size: 12px;
+  font-weight: 700;
+  color: ${props => props.active ? '#782221' : (props.clickable === false ? '#999' : '#2C2420')};
   cursor: ${props => props.clickable === false ? 'default' : 'pointer'};
   position: relative;
   transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-family: var(--font-cinzel), serif;
 
   &:hover {
-    color: ${props => props.clickable === false ? '#999' : '#ff6b35'};
+    color: ${props => props.clickable === false ? '#999' : '#782221'};
   }
 
   ${props => props.active && `
     &::after {
       content: '';
       position: absolute;
-      bottom: 0;
+      bottom: -4px;
       left: 0;
       right: 0;
-      height: 3px;
-      background: #ff6b35;
+      height: 2px;
+      background: #782221;
+      transition: width 0.3s;
     }
   `}
 `;
 
 const BreedsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 20px;
-  padding: 30px;
-  max-height: 400px;
-  overflow-y: auto;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  max-width: 1280px;
+  margin: 0 auto;
 `;
 
 const BreedCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.5s;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+  }
+`;
+
+const BreedCardInner = styled.div`
+  position: relative;
+  background: white;
+  padding: 12px;
+  border: 1px solid rgba(44, 36, 32, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.5s;
+
+  ${BreedCard}:hover & {
+    box-shadow: 8px 8px 0px 0px #782221;
+  }
+`;
+
+const BreedImageContainer = styled.div`
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  border: 1px solid rgba(44, 36, 32, 0.05);
+  margin-bottom: 16px;
+  background:
+    linear-gradient(135deg, rgba(245, 242, 233, 0.95), rgba(239, 237, 230, 0.92)),
+    repeating-linear-gradient(
+      45deg,
+      rgba(120, 34, 33, 0.05) 0,
+      rgba(120, 34, 33, 0.05) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+`;
+
+const BreedImage = styled(Image)`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.3) contrast(1.1) brightness(0.9);
+  transition: transform 0.7s;
+
+  ${BreedCard}:hover & {
+    transform: scale(1.05);
   }
 `;
 
 const BreedIcon = styled.div`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff9a85, #ff6b35);
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 80px;
+  background: linear-gradient(135deg, #F5F2E9, #EFEDE6);
+`;
+
+const BreedInfo = styled.div`
+  padding: 8px 0;
+  text-align: center;
+`;
+
+const BreedName = styled.h3`
+  font-family: var(--font-playfair), serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2C2420;
   margin-bottom: 8px;
-  box-shadow: 0 4px 12px rgba(255,107,53,0.3);
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  transition: color 0.3s;
+
+  ${BreedCard}:hover & {
+    color: #782221;
   }
 `;
 
-const BreedName = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  text-align: center;
-  margin-bottom: 4px;
-`;
-
-const BreedDetails = styled.div`
-  font-size: 12px;
-  color: #999;
+const BreedPrice = styled.div`
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  span:first-child, span:last-child {
+    height: 1px;
+    width: 32px;
+    background: rgba(44, 36, 32, 0.2);
+  }
+
+  p {
+    font-size: 14px;
+    color: #782221;
+    font-weight: 700;
+    font-family: var(--font-cinzel), serif;
+    letter-spacing: 0.15em;
+  }
 `;
 
-const DetailItem = styled.span`
-  padding: 2px 6px;
-  background: #f5f5f5;
-  border-radius: 10px;
+const AddButton = styled.button`
+  width: 100%;
+  margin-top: 8px;
+  background: #2C2420;
+  color: #F5F2E9;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #782221;
+  }
 `;
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('dog');
   const router = useRouter();
-  
+
   const currentCategory = petCategories.find(cat => cat.id === activeCategory);
 
   const handlePetClick = (breedId: string) => {
@@ -132,44 +208,59 @@ export default function Home() {
 
   return (
     <Container>
-      <PetNavigationContainer>
-        <CategoryTabs>
-          {petCategories.map((category) => (
-            <CategoryTab
-              key={category.id}
-              active={activeCategory === category.id}
-              clickable={category.isClickable !== false}
-              onClick={() => {
-                if (category.isClickable !== false) {
-                  setActiveCategory(category.id);
-                }
-              }}
-            >
-              {category.name}
-            </CategoryTab>
-          ))}
-        </CategoryTabs>
+      {/* Categories Section */}
+      <CategoriesSection>
+        <PetNavigationContainer>
+          <CategoryTabs>
+            {petCategories.map((category) => (
+              <CategoryTab
+                key={category.id}
+                active={activeCategory === category.id}
+                clickable={category.isClickable !== false}
+                onClick={() => {
+                  if (category.isClickable !== false) {
+                    setActiveCategory(category.id);
+                  }
+                }}
+              >
+                {category.name}
+              </CategoryTab>
+            ))}
+          </CategoryTabs>
 
-        <BreedsGrid>
-          {currentCategory?.breeds.map((breed) => (
-            <BreedCard key={breed.id} onClick={() => handlePetClick(breed.id)}>
-              <BreedIcon>
-                {breed.icon.startsWith('/') ? (
-                  <img src={breed.icon} alt={breed.name} />
-                ) : (
-                  breed.icon
-                )}
-              </BreedIcon>
-              <BreedName>{breed.name}</BreedName>
-              <BreedDetails>
-                <DetailItem>百科</DetailItem>
-                <DetailItem>饲养</DetailItem>
-                <DetailItem>护理</DetailItem>
-              </BreedDetails>
-            </BreedCard>
-          ))}
-        </BreedsGrid>
-      </PetNavigationContainer>
+          <BreedsGrid>
+            {currentCategory?.breeds.map((breed) => (
+              <BreedCard key={breed.id} onClick={() => handlePetClick(breed.id)}>
+                <BreedCardInner>
+                  <BreedImageContainer>
+                    {breed.icon.startsWith('/') ? (
+                      <BreedImage
+                        src={breed.icon}
+                        alt={breed.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        loading="lazy"
+                        placeholder="empty"
+                      />
+                    ) : (
+                      <BreedIcon>{breed.icon}</BreedIcon>
+                    )}
+                  </BreedImageContainer>
+                  <BreedInfo>
+                    <BreedName>{breed.name}</BreedName>
+                    <BreedPrice>
+                      <span></span>
+                      <p>查看详情</p>
+                      <span></span>
+                    </BreedPrice>
+                  </BreedInfo>
+                  <AddButton>了解更多</AddButton>
+                </BreedCardInner>
+              </BreedCard>
+            ))}
+          </BreedsGrid>
+        </PetNavigationContainer>
+      </CategoriesSection>
     </Container>
   );
 }

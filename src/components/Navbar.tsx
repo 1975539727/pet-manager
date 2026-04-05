@@ -1,59 +1,88 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, User, LogOut, ChevronDown } from 'lucide-react';
+import { Scroll, User, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const Nav = styled.nav`
-  background-color: white;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  border-bottom: 1px solid #e5e7eb;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const NavContainer = styled.div`
-  max-width: 80rem;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
-
-  @media (min-width: 640px) {
-    padding: 0 1.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 0 2rem;
-  }
-`;
-
-const NavContent = styled.div`
+  padding: 0 24px;
+  height: 96px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 4rem;
+  justify-content: space-between;
 `;
 
 const LeftSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 8px;
 `;
 
 const Logo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  cursor: pointer;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #782221;
+    stroke-width: 1.5;
+  }
+`;
+
+const LogoTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const LogoText = styled.span`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ea580c;
+  font-size: 24px;
+  font-weight: 900;
+  font-family: var(--font-playfair), serif;
+  letter-spacing: -0.02em;
+  color: #2C2420;
+  line-height: 1;
+
+  i {
+    color: #782221;
+    font-style: italic;
+    font-weight: 400;
+  }
+`;
+
+const LogoSubtext = styled.span`
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #5D4037;
+  font-family: var(--font-cinzel), serif;
 `;
 
 const NavLinks = styled.div`
   display: none;
   align-items: center;
-  gap: 1.5rem;
+  gap: 48px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2C2420;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: var(--font-cinzel), serif;
 
   @media (min-width: 768px) {
     display: flex;
@@ -61,65 +90,132 @@ const NavLinks = styled.div`
 `;
 
 const NavLink = styled.span`
-  color: #374151;
-  font-weight: 500;
-  transition: color 0.2s;
+  position: relative;
+  transition: color 0.3s;
   cursor: pointer;
 
   &:hover {
-    color: #ea580c;
+    color: #782221;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #782221;
+    transition: width 0.3s;
+  }
+
+  &:hover::after {
+    width: 100%;
   }
 `;
 
 const RightSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 24px;
 `;
 
-const SearchButton = styled.button`
-  padding: 0.5rem;
-  color: #4b5563;
-  transition: color 0.2s;
+const IconButton = styled.button`
+  color: #2C2420;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 
   &:hover {
-    color: #ea580c;
+    color: #782221;
   }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const CartButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2C2420;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    color: #782221;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const CartBadge = styled.span`
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: #782221;
+  border-radius: 50%;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  border: 1px solid #F5F2E9;
 `;
 
 const AuthSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 12px;
 `;
 
 const LoginLink = styled.span`
-  color: #374151;
-  font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  transition: color 0.2s;
+  color: #2C2420;
+  font-weight: 700;
+  padding: 8px 12px;
+  transition: color 0.3s;
   cursor: pointer;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-cinzel), serif;
 
   &:hover {
-    color: #ea580c;
+    color: #782221;
   }
 `;
 
-const Separator = styled.span`
-  color: #d1d5db;
-`;
-
 const RegisterButton = styled.span`
-  background-color: #ea580c;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  background: #782221;
+  color: #F5F2E9;
+  padding: 12px 24px;
+  font-weight: 700;
+  transition: all 0.3s;
   cursor: pointer;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
+  font-family: var(--font-cinzel), serif;
 
   &:hover {
-    background-color: #c2410c;
+    background: #9B2C2C;
+    transform: translateY(1px);
+    box-shadow: 1px 1px 0px 0px #2C2420;
   }
 `;
 
@@ -127,36 +223,37 @@ const UserSection = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  gap: 12px;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
+  border: 1px solid rgba(44, 36, 32, 0.1);
 
   &:hover {
-    background-color: #f9fafb;
+    background: rgba(44, 36, 32, 0.05);
   }
 `;
 
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 `;
 
 const UserAvatar = styled.div<{ $hasImage: boolean }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #782221, #9B2C2C)'};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 600;
+  color: #F5F2E9;
+  font-weight: 700;
   font-size: 14px;
   overflow: hidden;
-  
+  border: 2px solid #F5F2E9;
+
   img {
     width: 100%;
     height: 100%;
@@ -165,12 +262,16 @@ const UserAvatar = styled.div<{ $hasImage: boolean }>`
 `;
 
 const UserName = styled.span`
-  color: #374151;
-  font-weight: 500;
+  color: #2C2420;
+  font-weight: 700;
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-cinzel), serif;
 
   @media (max-width: 768px) {
     display: none;
@@ -181,40 +282,35 @@ const DropdownMenu = styled.div<{ $isOpen: boolean }>`
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  background: #F5F2E9;
+  border: 1px solid rgba(44, 36, 32, 0.2);
+  box-shadow: 4px 4px 0px 0px #2C2420;
   min-width: 180px;
   z-index: 50;
   opacity: ${props => props.$isOpen ? '1' : '0'};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
   transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
-  transition: all 0.2s;
+  transition: all 0.3s;
 `;
 
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  color: #374151;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #2C2420;
   cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:first-child {
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-  }
-
-  &:last-child {
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
+  transition: all 0.3s;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-cinzel), serif;
 
   &:hover {
-    background-color: #f9fafb;
+    background: rgba(120, 34, 33, 0.1);
+    color: #782221;
   }
 
   svg {
@@ -224,49 +320,13 @@ const MenuItem = styled.div`
 `;
 
 const WelcomeText = styled.span`
-  color: #374151;
+  color: #5D4037;
   font-weight: 500;
-  
+  font-size: 12px;
+  font-family: var(--font-dm-sans), sans-serif;
+
   @media (max-width: 768px) {
     display: none;
-  }
-`;
-
-const SearchBarContainer = styled.div`
-  padding-bottom: 1rem;
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  outline: none;
-
-  &:focus {
-    border-color: #ea580c;
-    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
-  }
-`;
-
-const MobileMenu = styled.div`
-  display: block;
-  padding: 0 1rem 0.75rem;
-  
-  @media (min-width: 768px) {
-    display: none;
-  }
-`;
-
-const MobileMenuLink = styled.span`
-  display: block;
-  color: #374151;
-  padding: 0.5rem 0;
-  transition: color 0.2s;
-  cursor: pointer;
-
-  &:hover {
-    color: #ea580c;
   }
 `;
 
@@ -282,7 +342,6 @@ interface User {
 }
 
 export default function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -351,120 +410,81 @@ export default function Navbar() {
   return (
     <Nav>
       <NavContainer>
-        <NavContent>
-          {/* Logo and Navigation Links */}
-          <LeftSection>
-            {/* Logo */}
-            <Link href="/">
-              <Logo>
-                <LogoText>🐾 爪爪管家</LogoText>
-              </Logo>
-            </Link>
-            
-            {/* Navigation Links */}
-            <NavLinks>
-              <Link href="/">
-                <NavLink>首页</NavLink>
-              </Link>
-              <Link href="/my-pets">
-                <NavLink>我的宠物</NavLink>
-              </Link>
-              <Link href="/assistant">
-                <NavLink>智能助手</NavLink>
-              </Link>
-              <Link href="/profile">
-                <NavLink>我的</NavLink>
-              </Link>
-            </NavLinks>
-          </LeftSection>
-
-          {/* Right Side: Search and Auth */}
-          <RightSection>
-            {/* Search Icon */}
-            <SearchButton 
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              aria-label="搜索"
-            >
-              <Search size={20} />
-            </SearchButton>
-
-            {/* Login/Register or User Info */}
-            <AuthSection>
-              {!isMounted ? (
-                // 服务器端渲染时显示占位符
-                <div style={{ width: '120px', height: '40px' }}></div>
-              ) : user ? (
-                <UserSection 
-                  ref={userMenuRef}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
-                  <UserInfo>
-                    <WelcomeText>欢迎回来，</WelcomeText>
-                    <UserAvatar $hasImage={!!user.avatar_url}>
-                      {user.avatar_url ? (
-                        <img src={user.avatar_url} alt="用户头像" />
-                      ) : (
-                        getUserInitial(user.username || user.full_name)
-                      )}
-                    </UserAvatar>
-                    <UserName>{user.username || user.full_name || '用户'}</UserName>
-                    <ChevronDown size={16} />
-                  </UserInfo>
-                  <DropdownMenu $isOpen={isDropdownOpen}>
-                    <Link href="/profile">
-                      <MenuItem>
-                        <User size={18} />
-                        <span>个人中心</span>
-                      </MenuItem>
-                    </Link>
-                    <MenuItem onClick={handleLogout}>
-                      <LogOut size={18} />
-                      <span>退出登录</span>
-                    </MenuItem>
-                  </DropdownMenu>
-                </UserSection>
-              ) : (
-                <>
-                  <Link href="/auth/login">
-                    <LoginLink>登录</LoginLink>
-                  </Link>
-                  <Separator>|</Separator>
-                  <Link href="/auth/register">
-                    <RegisterButton>注册</RegisterButton>
-                  </Link>
-                </>
-              )}
-            </AuthSection>
-          </RightSection>
-        </NavContent>
-
-        {/* Search Bar (Expandable) */}
-        {isSearchOpen && (
-          <SearchBarContainer>
-            <SearchInput
-              type="text"
-              placeholder="搜索宠物信息..."
-              autoFocus
-            />
-          </SearchBarContainer>
-        )}
-      </NavContainer>
-
-      {/* Mobile Menu */}
-      <MobileMenu>
+        {/* Logo */}
         <Link href="/">
-          <MobileMenuLink>首页</MobileMenuLink>
+          <Logo>
+            <Scroll />
+            <LogoTextContainer>
+              <LogoText>爪爪<i>管家</i></LogoText>
+              <LogoSubtext>Est. MMXXIII</LogoSubtext>
+            </LogoTextContainer>
+          </Logo>
         </Link>
-        <Link href="/my-pets">
-          <MobileMenuLink>我的宠物</MobileMenuLink>
-        </Link>
-        <Link href="/assistant">
-          <MobileMenuLink>智能助手</MobileMenuLink>
-        </Link>
-        <Link href="/profile">
-          <MobileMenuLink>我的</MobileMenuLink>
-        </Link>
-      </MobileMenu>
+
+        {/* Navigation Links */}
+        <NavLinks>
+          <Link href="/">
+            <NavLink>首页</NavLink>
+          </Link>
+          <Link href="/my-pets">
+            <NavLink>我的宠物</NavLink>
+          </Link>
+          <Link href="/assistant">
+            <NavLink>智能助手</NavLink>
+          </Link>
+          <Link href="/animal-knowledge">
+            <NavLink>宠物百科</NavLink>
+          </Link>
+        </NavLinks>
+
+        {/* Right Side */}
+        <RightSection>
+          {/* Login/Register or User Info */}
+          <AuthSection>
+            {!isMounted ? (
+              <div style={{ width: '120px', height: '40px' }}></div>
+            ) : user ? (
+              <UserSection
+                ref={userMenuRef}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <UserInfo>
+                  <UserAvatar $hasImage={!!user.avatar_url}>
+                    {user.avatar_url ? (
+                      <img src={user.avatar_url} alt="用户头像" />
+                    ) : (
+                      getUserInitial(user.username || user.full_name)
+                    )}
+                  </UserAvatar>
+                  <UserName>{user.username || user.full_name || '用户'}</UserName>
+                  <ChevronDown size={16} />
+                </UserInfo>
+                <DropdownMenu $isOpen={isDropdownOpen}>
+                  <Link href="/profile">
+                    <MenuItem>
+                      <User size={18} />
+                      <span>个人中心</span>
+                    </MenuItem>
+                  </Link>
+                  <MenuItem onClick={handleLogout}>
+                    <LogOut size={18} />
+                    <span>退出登录</span>
+                  </MenuItem>
+                </DropdownMenu>
+              </UserSection>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <LoginLink>登录</LoginLink>
+                </Link>
+                <Link href="/auth/register">
+                  <RegisterButton>注册</RegisterButton>
+                </Link>
+              </>
+            )}
+          </AuthSection>
+        </RightSection>
+      </NavContainer>
     </Nav>
   );
 }

@@ -10,8 +10,13 @@ import { chatStream } from '@/llm/chatStream';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed, #fce7f3);
-  padding: 2rem 1rem;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  padding: 120px 2rem 2rem;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const PetSwitcher = styled.div`
@@ -26,26 +31,28 @@ const PetAvatar = styled.div<{ $active?: boolean }>`
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #fed7aa, #fecaca);
+  background: linear-gradient(135deg, #C5A059, #782221);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: ${props => props.$active ? '3px solid #f97316' : '2px solid transparent'};
+  border: ${props => props.$active ? '3px solid #782221' : '2px solid rgba(44, 36, 32, 0.2)'};
   transition: all 0.3s;
-  
+  box-shadow: ${props => props.$active ? '0 4px 12px rgba(120, 34, 33, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)'};
+
   &:hover {
     transform: scale(1.05);
-    border-color: #f97316;
+    border-color: #782221;
   }
-  
+
   img {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+    filter: sepia(0.2) contrast(1.05);
   }
-  
+
   .placeholder {
     font-size: 2rem;
   }
@@ -56,31 +63,36 @@ const PetName = styled.div`
   bottom: -1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 0.125rem 0.5rem;
+  background: #2C2420;
+  color: #F5F2E9;
+  padding: 0.25rem 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
   white-space: nowrap;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
 `;
 
 const AddPetButton = styled.button`
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border: 2px dashed #d1d5db;
+  border: 2px dashed #5D4037;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  color: #9ca3af;
-  
+  color: #5D4037;
+
   &:hover {
-    border-color: #f97316;
-    color: #f97316;
-    background: rgba(249, 115, 22, 0.05);
+    border-color: #782221;
+    color: #782221;
+    background: rgba(120, 34, 33, 0.05);
+    transform: scale(1.05);
   }
 `;
 
@@ -100,13 +112,19 @@ const EmptyState = styled.div`
 `;
 
 const PetDetailCard = styled.div`
-  background: white;
-  border-radius: 1.5rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 3px solid #1f2937;
+  box-shadow: 8px 8px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
   max-width: 60rem;
   margin: 0 auto;
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 12px 12px 0px 0px #2C2420;
+    transform: translate(-2px, -2px);
+  }
 `;
 
 const CardHeader = styled.div`
@@ -114,7 +132,8 @@ const CardHeader = styled.div`
   align-items: center;
   padding: 1.5rem;
   gap: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
+  background: rgba(255, 255, 255, 0.5);
 `;
 
 const PetAvatar2 = styled.div`
@@ -140,20 +159,24 @@ const PetAvatar2 = styled.div`
 
 const PetTitleSection = styled.div`
   flex: 1;
-  
+
   h2 {
     font-size: 1.5rem;
-    font-weight: bold;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-family: var(--font-playfair), serif;
   }
-  
+
   p {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #5D4037;
     margin-top: 0.25rem;
+    font-family: var(--font-cinzel), serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 `;
 
@@ -238,57 +261,65 @@ const CardBody = styled.div`
 const InfoCard = styled.div<{ $color?: string }>`
   background: ${props => {
     switch (props.$color) {
-      case 'orange': return 'linear-gradient(135deg, #fed7aa, #fdba74)';
-      case 'green': return 'linear-gradient(135deg, #a7f3d0, #6ee7b7)';
-      default: return 'linear-gradient(135deg, #e0e7ff, #c7d2fe)';
+      case 'orange': return 'linear-gradient(135deg, #C5A059, #D4AF37)';
+      case 'green': return 'linear-gradient(135deg, #556B2F, #6B8E23)';
+      default: return 'linear-gradient(135deg, #9B2C2C, #782221)';
     }
   }};
   padding: 1.5rem;
-  border-radius: 1rem;
-  
+  border-radius: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
+  }
+
   .label {
     font-size: 0.875rem;
-    color: #374151;
+    color: #F5F2E9;
     margin-bottom: 0.5rem;
+    font-family: var(--font-cinzel), serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
   }
-  
+
   .value {
     font-size: 1.75rem;
-    font-weight: bold;
-    color: #1f2937;
+    font-weight: 700;
+    color: #F5F2E9;
+    font-family: var(--font-playfair), serif;
   }
-  
+
   .date {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: rgba(245, 242, 233, 0.8);
     text-align: right;
     margin-top: 0.5rem;
   }
-  
+
   .progress {
     width: 100%;
     height: 0.5rem;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 0.25rem;
+    background: rgba(245, 242, 233, 0.3);
+    border-radius: 0;
     margin-top: 0.5rem;
     overflow: hidden;
-    
+    border: 1px solid rgba(44, 36, 32, 0.2);
+
     .bar {
       height: 100%;
-      background: ${props => {
-        switch (props.$color) {
-          case 'orange': return '#f97316';
-          case 'green': return '#10b981';
-          default: return '#3b82f6';
-        }
-      }};
+      background: #F5F2E9;
       transition: width 0.3s;
     }
   }
-  
+
   .sub-label {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: rgba(245, 242, 233, 0.9);
     margin-top: 0.25rem;
   }
 `;
@@ -334,14 +365,20 @@ const TagButton = styled.button<{ $variant?: 'default' | 'primary' }>`
 
 const LoadingContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed, #fce7f3);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   
   .loading-text {
     font-size: 1.25rem;
-    color: #ea580c;
+    color: #2C2420;
+    font-family: var(--font-playfair), serif;
+    font-weight: 600;
   }
 `;
 
@@ -360,12 +397,13 @@ const QuickActionsHeader = styled.div`
   
   h3 {
     font-size: 1rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
+    font-family: var(--font-playfair), serif;
   }
   
   .star {
-    color: #1f2937;
+    color: #C5A059;
   }
 `;
 
@@ -390,26 +428,36 @@ const QuickActionButton = styled.button<{ $bgColor?: string }>`
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  transition: transform 0.2s;
+  transition: all 0.3s;
   
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px);
   }
   
   .icon-wrapper {
     width: 4rem;
     height: 4rem;
-    border-radius: 1.25rem;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${props => props.$bgColor || '#dbeafe'};
+    background: ${props => props.$bgColor || 'rgba(197, 160, 89, 0.2)'};
     font-size: 1.75rem;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
+    transition: all 0.3s;
+  }
+
+  &:hover .icon-wrapper {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px #2C2420;
   }
   
   .label {
     font-size: 0.875rem;
-    color: #4b5563;
+    color: #2C2420;
+    font-weight: 600;
+    font-family: var(--font-dm-sans), sans-serif;
   }
 `;
 
@@ -428,12 +476,13 @@ const DiscoverHeader = styled.div`
   
   h3 {
     font-size: 1rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
+    font-family: var(--font-playfair), serif;
   }
   
   .icon {
-    color: #1f2937;
+    color: #2C2420;
   }
 `;
 
@@ -446,58 +495,65 @@ const DiscoverGrid = styled.div`
 const DiscoverCard = styled.button<{ $bgColor?: string }>`
   position: relative;
   padding: 2rem 1.5rem;
-  border-radius: 1.5rem;
-  border: 3px solid #1f2937;
-  background: ${props => props.$bgColor || '#dbeafe'};
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  background: ${props => props.$bgColor || 'rgba(197, 160, 89, 0.15)'};
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px 0px #2C2420;
   }
   
   .icon-wrapper {
     width: 3rem;
     height: 3rem;
-    border-radius: 0.75rem;
-    background: white;
+    border-radius: 0;
+    background: #F5F2E9;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
     font-size: 1.5rem;
-    border: 2px solid #1f2937;
+    border: 2px solid #2C2420;
+    box-shadow: 2px 2px 0px 0px #2C2420;
   }
   
   .title {
     font-size: 1.125rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     margin-bottom: 0.25rem;
+    font-family: var(--font-playfair), serif;
   }
   
   .subtitle {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: #5D4037;
+    font-family: var(--font-dm-sans), sans-serif;
   }
   
   .action-button {
     position: absolute;
     bottom: 1.5rem;
     left: 1.5rem;
-    background: #1f2937;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
+    background: #782221;
+    color: #F5F2E9;
+    border: 2px solid #2C2420;
+    border-radius: 0;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s;
+    font-family: var(--font-cinzel), serif;
+    box-shadow: 2px 2px 0px 0px #2C2420;
     
     &:hover {
-      background: #374151;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px 0px #2C2420;
     }
   }
 `;
@@ -508,7 +564,7 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(44, 36, 32, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -517,12 +573,13 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: #fef7ed;
-  border-radius: 24px;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 32px;
   max-width: 600px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 3px solid #2C2420;
+  box-shadow: 8px 8px 0px 0px #2C2420;
   position: relative;
 `;
 
@@ -536,19 +593,22 @@ const ModalHeader = styled.div`
 const ModalIconWrapper = styled.div`
   width: 56px;
   height: 56px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #8b7aff, #6b5bff);
+  border-radius: 0;
+  background: linear-gradient(135deg, #782221, #9B2C2C);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  box-shadow: 3px 3px 0px 0px #2C2420;
 `;
 
 const ModalTitle = styled.h2`
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const CloseButton = styled.button`
@@ -557,19 +617,20 @@ const CloseButton = styled.button`
   right: 16px;
   width: 32px;
   height: 32px;
-  border: none;
+  border: 2px solid #2C2420;
   background: transparent;
   cursor: pointer;
-  color: #666;
+  color: #2C2420;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: 0;
+  transition: all 0.3s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #333;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
@@ -578,42 +639,47 @@ const PetTag = styled.div`
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: white;
-  border: 2px solid #f0f0f0;
-  border-radius: 16px;
+  background: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   margin-bottom: 24px;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const PetTagIcon = styled.div`
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #ff9a85, #ff6b35);
+  border-radius: 0;
+  background: linear-gradient(135deg, #C5A059, #782221);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  border: 2px solid #2C2420;
 `;
 
 const PetTagText = styled.span`
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #2C2420;
+  font-family: var(--font-playfair), serif;
 `;
 
 const ModalDescription = styled.p`
-  color: #999;
+  color: #5D4037;
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 24px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const InputLabel = styled.label`
   display: block;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #2C2420;
   margin-bottom: 12px;
+  font-family: var(--font-playfair), serif;
 `;
 
 const InputWrapper = styled.div`
@@ -626,7 +692,7 @@ const SearchIcon = styled.div`
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b5bff;
+  color: #782221;
   display: flex;
   align-items: center;
 `;
@@ -634,19 +700,22 @@ const SearchIcon = styled.div`
 const Input = styled.input`
   width: 100%;
   padding: 16px 16px 16px 48px;
-  border: 2px solid #e0e0e0;
-  border-radius: 16px;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 16px;
   outline: none;
   transition: all 0.2s;
   background: white;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
 
   &::placeholder {
-    color: #ccc;
+    color: #aaa;
   }
 
   &:focus {
-    border-color: #6b5bff;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -660,31 +729,33 @@ const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'variant'
 })<{ variant?: 'primary' | 'secondary' }>`
   padding: 14px 32px;
-  border-radius: 16px;
+  border-radius: 0;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  border: none;
+  transition: all 0.3s;
+  border: 2px solid #2C2420;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   ${props => props.variant === 'primary' ? `
-    background: linear-gradient(135deg, #8b7aff, #6b5bff);
-    color: white;
+    background: #782221;
+    color: #F5F2E9;
+    box-shadow: 3px 3px 0px 0px #2C2420;
 
     &:hover {
-      background: linear-gradient(135deg, #7a69ee, #5a4bee);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px 0px #2C2420;
     }
   ` : `
     background: transparent;
-    color: #666;
+    color: #2C2420;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(44, 36, 32, 0.05);
     }
   `}
 `;
@@ -984,7 +1055,7 @@ export default function MyPetsPage() {
             </QuickActionsHeader>
             <QuickActionsGrid>
               <QuickActionButton 
-                $bgColor="#dbeafe"
+                $bgColor="rgba(197, 160, 89, 0.2)"
                 onClick={() => router.push('/medication')}
               >
                 <div className="icon-wrapper">💙</div>
@@ -992,7 +1063,7 @@ export default function MyPetsPage() {
               </QuickActionButton>
               
               <QuickActionButton 
-                $bgColor="#fce7f3"
+                $bgColor="rgba(120, 34, 33, 0.12)"
                 onClick={() => router.push('/reminders')}
               >
                 <div className="icon-wrapper">⏰</div>
@@ -1000,7 +1071,7 @@ export default function MyPetsPage() {
               </QuickActionButton>
               
               <QuickActionButton 
-                $bgColor="#fce7f3"
+                $bgColor="rgba(93, 64, 55, 0.12)"
                 onClick={() => setShowDietModal(true)}
               >
                 <div className="icon-wrapper">🍴</div>
@@ -1016,7 +1087,7 @@ export default function MyPetsPage() {
             </DiscoverHeader>
             <DiscoverGrid>
               <DiscoverCard 
-                $bgColor="#dbeafe"
+                $bgColor="rgba(197, 160, 89, 0.15)"
                 onClick={() => router.push('/animal-knowledge')}
               >
                 <div className="icon-wrapper">📚</div>
@@ -1025,7 +1096,7 @@ export default function MyPetsPage() {
                 <div className="action-button">去看看 ›</div>
               </DiscoverCard>
               
-              <DiscoverCard $bgColor="#fce7f3">
+              <DiscoverCard $bgColor="rgba(120, 34, 33, 0.1)">
                 <div className="icon-wrapper">💬</div>
                 <div className="title">萌宠贴纸</div>
                 <div className="subtitle">记录可爱瞬间</div>
@@ -1056,7 +1127,7 @@ export default function MyPetsPage() {
                 <PetTag>
                   <PetTagIcon>
                     {(selectedPet.avatar_url || selectedPet.photo_url) ? (
-                      <img src={selectedPet.avatar_url || selectedPet.photo_url} alt={selectedPet.name} style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }} />
+                      <img src={selectedPet.avatar_url || selectedPet.photo_url} alt={selectedPet.name} style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }} />
                     ) : (
                       <span>🐾</span>
                     )}
@@ -1096,7 +1167,7 @@ export default function MyPetsPage() {
               // 结果界面
               <>
                 <ModalHeader>
-                  <ModalIconWrapper style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
+                  <ModalIconWrapper style={{ background: 'linear-gradient(135deg, #C5A059, #8B6914)' }}>
                     <Lightbulb size={24} />
                   </ModalIconWrapper>
                   <ModalTitle>智能分析结果</ModalTitle>
@@ -1105,28 +1176,30 @@ export default function MyPetsPage() {
                 <div style={{ 
                   background: 'white', 
                   padding: '20px', 
-                  borderRadius: '16px', 
-                  border: '2px solid #f0f0f0',
+                  borderRadius: '0', 
+                  border: '3px solid #2C2420',
+                  boxShadow: '4px 4px 0px 0px #2C2420',
                   marginBottom: '16px',
                   whiteSpace: 'pre-wrap',
                   lineHeight: '1.6',
-                  color: '#333'
+                  color: '#2C2420',
+                  fontFamily: 'var(--font-dm-sans), sans-serif'
                 }}>
                   {queryResult}
                 </div>
 
                 <div style={{
-                  background: '#fef2f2',
-                  border: '2px solid #ef4444',
-                  borderRadius: '16px',
+                  background: 'rgba(120, 34, 33, 0.08)',
+                  border: '2px solid #782221',
+                  borderRadius: '0',
                   padding: '16px',
                   marginBottom: '24px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px'
                 }}>
-                  <AlertTriangle size={20} color="#ef4444" style={{ flexShrink: 0 }} />
-                  <span style={{ color: '#991b1b', fontSize: '14px' }}>
+                  <AlertTriangle size={20} color="#782221" style={{ flexShrink: 0 }} />
+                  <span style={{ color: '#782221', fontSize: '14px', fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                     仅供参考，若宠物有不适请尽快联系线下兽医。
                   </span>
                 </div>

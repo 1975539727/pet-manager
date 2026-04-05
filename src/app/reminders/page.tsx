@@ -10,16 +10,22 @@ import { REMINDER_TYPES, createReminder, getPendingReminders, getCompletedRemind
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed, #fce7f3);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
-  background: white;
-  padding: 1rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -32,46 +38,55 @@ const HeaderLeft = styled.div`
 `;
 
 const BackButton = styled.button`
-  background: transparent;
-  border: none;
+  background: none;
+  border: 2px solid #2C2420;
   cursor: pointer;
-  color: #1f2937;
+  color: #2C2420;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    color: #f97316;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const Title = styled.h1`
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const AddButton = styled.button`
-  background: transparent;
-  border: none;
+  background: none;
+  border: 2px solid #2C2420;
   cursor: pointer;
-  color: #1f2937;
+  color: #2C2420;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    color: #f97316;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const TabContainer = styled.div`
-  background: white;
+  background: rgba(245, 242, 233, 0.95);
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const Tab = styled.button<{ $active?: boolean }>`
@@ -81,13 +96,15 @@ const Tab = styled.button<{ $active?: boolean }>`
   background: transparent;
   cursor: pointer;
   font-size: 0.875rem;
-  color: ${props => props.$active ? '#8b5cf6' : '#6b7280'};
-  border-bottom: ${props => props.$active ? '2px solid #8b5cf6' : '2px solid transparent'};
+  color: ${props => props.$active ? '#782221' : '#5D4037'};
+  border-bottom: ${props => props.$active ? '3px solid #782221' : '3px solid transparent'};
   transition: all 0.2s;
-  font-weight: ${props => props.$active ? '600' : '400'};
+  font-weight: ${props => props.$active ? '700' : '400'};
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   &:hover {
-    color: #8b5cf6;
+    color: #782221;
   }
 `;
 
@@ -97,46 +114,51 @@ const ContentContainer = styled.div`
 `;
 
 const EmptyState = styled.div`
-  background: white;
-  border-radius: 1.5rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 4rem 2rem;
   text-align: center;
   max-width: 60rem;
   margin: 0 auto;
-  border: 3px solid #1f2937;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   
   .icon-wrapper {
     width: 5rem;
     height: 5rem;
-    background: #8b5cf6;
-    border-radius: 1rem;
+    background: linear-gradient(135deg, #782221, #9B2C2C);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
     
     svg {
-      color: white;
+      color: #F5F2E9;
     }
   }
   
   h3 {
     font-size: 1.125rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     margin-bottom: 0.5rem;
+    font-family: var(--font-playfair), serif;
   }
   
   p {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #5D4037;
+    font-family: var(--font-dm-sans), sans-serif;
   }
 `;
 
 const ModalOverlay = styled.div<{ $show: boolean }>`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(44, 36, 32, 0.6);
   display: ${props => props.$show ? 'flex' : 'none'};
   align-items: center;
   justify-content: center;
@@ -145,12 +167,13 @@ const ModalOverlay = styled.div<{ $show: boolean }>`
 `;
 
 const ModalContent = styled.div`
-  background: #fef7ed;
-  border-radius: 1.5rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 2rem;
   max-width: 32rem;
   width: 100%;
-  border: 3px solid #1f2937;
+  border: 3px solid #2C2420;
+  box-shadow: 8px 8px 0px 0px #2C2420;
 `;
 
 const ModalHeader = styled.div`
@@ -162,19 +185,22 @@ const ModalHeader = styled.div`
   .icon {
     width: 3rem;
     height: 3rem;
-    background: #c7d2fe;
-    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #782221, #9B2C2C);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+    border: 2px solid #2C2420;
+    box-shadow: 2px 2px 0px 0px #2C2420;
   }
   
   h2 {
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     margin: 0;
+    font-family: var(--font-playfair), serif;
   }
 `;
 
@@ -184,28 +210,32 @@ const FormGroup = styled.div`
   label {
     display: block;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #1f2937;
+    font-weight: 600;
+    color: #2C2420;
     margin-bottom: 0.5rem;
+    font-family: var(--font-playfair), serif;
   }
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 3px solid #1f2937;
-  border-radius: 1rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   background: white;
   font-size: 0.875rem;
   transition: all 0.2s;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &::placeholder {
-    color: #9ca3af;
+    color: #aaa;
   }
   
   &:focus {
     outline: none;
-    border-color: #8b5cf6;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -216,8 +246,8 @@ const SelectWrapper = styled.div`
 const Select = styled.div`
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 3px solid #1f2937;
-  border-radius: 1rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   background: white;
   font-size: 0.875rem;
   cursor: pointer;
@@ -225,15 +255,16 @@ const Select = styled.div`
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:hover {
-    border-color: #8b5cf6;
+    border-color: #782221;
   }
   
   .icon {
     width: 1.5rem;
     height: 1.5rem;
-    border-radius: 0.375rem;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -244,11 +275,11 @@ const Select = styled.div`
   
   .text {
     flex: 1;
-    color: #1f2937;
+    color: #2C2420;
   }
   
   svg {
-    color: #6b7280;
+    color: #5D4037;
     flex-shrink: 0;
   }
 `;
@@ -258,26 +289,25 @@ const DropdownMenu = styled.div<{ $show: boolean }>`
   top: calc(100% + 0.5rem);
   left: 0;
   right: 0;
-  background: white;
-  border: 3px solid #1f2937;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   max-height: 20rem;
   overflow-y: auto;
   z-index: 100;
   display: ${props => props.$show ? 'block' : 'none'};
+  box-shadow: 4px 4px 0px 0px #2C2420;
   
   &::-webkit-scrollbar {
     width: 0.5rem;
   }
   
   &::-webkit-scrollbar-track {
-    background: #f3f4f6;
-    border-radius: 0.25rem;
+    background: rgba(44, 36, 32, 0.05);
   }
   
   &::-webkit-scrollbar-thumb {
-    background: #9ca3af;
-    border-radius: 0.25rem;
+    background: #5D4037;
   }
 `;
 
@@ -288,15 +318,20 @@ const MenuItem = styled.div<{ $selected?: boolean }>`
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background 0.2s;
+  border-bottom: 1px solid rgba(44, 36, 32, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
   
   &:hover {
-    background: #f9fafb;
+    background: rgba(120, 34, 33, 0.05);
   }
   
   .icon {
     width: 2rem;
     height: 2rem;
-    border-radius: 0.5rem;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -307,13 +342,14 @@ const MenuItem = styled.div<{ $selected?: boolean }>`
   
   .text {
     flex: 1;
-    color: #1f2937;
+    color: #2C2420;
     font-size: 0.875rem;
   }
   
   .check {
-    color: #8b5cf6;
+    color: #782221;
     flex-shrink: 0;
+    font-weight: 700;
   }
 `;
 
@@ -321,16 +357,19 @@ const DateInput = styled.input`
   width: 100%;
   padding: 0.875rem 1rem;
   padding-left: 3rem;
-  border: 3px solid #1f2937;
-  border-radius: 1rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   background: white;
   font-size: 0.875rem;
   transition: all 0.2s;
   cursor: pointer;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:focus {
     outline: none;
-    border-color: #8b5cf6;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -342,7 +381,7 @@ const DateInputWrapper = styled.div`
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #8b5cf6;
+    color: #782221;
     pointer-events: none;
   }
 `;
@@ -350,22 +389,24 @@ const DateInputWrapper = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 3px solid #1f2937;
-  border-radius: 1rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   background: white;
   font-size: 0.875rem;
   min-height: 5rem;
   resize: vertical;
-  font-family: inherit;
+  font-family: var(--font-dm-sans), sans-serif;
   transition: all 0.2s;
+  color: #2C2420;
   
   &::placeholder {
-    color: #9ca3af;
+    color: #aaa;
   }
   
   &:focus {
     outline: none;
-    border-color: #8b5cf6;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -378,52 +419,65 @@ const ModalActions = styled.div`
 const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   flex: 1;
   padding: 0.875rem 1.5rem;
-  border-radius: 1.5rem;
-  border: none;
+  border-radius: 0;
+  border: 2px solid #2C2420;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   ${props => props.$variant === 'primary' ? `
-    background: #8b5cf6;
-    color: white;
+    background: #782221;
+    color: #F5F2E9;
+    box-shadow: 3px 3px 0px 0px #2C2420;
     
     &:hover {
-      background: #7c3aed;
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px 0px #2C2420;
     }
   ` : `
     background: transparent;
-    color: #1f2937;
+    color: #2C2420;
     
     &:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(44, 36, 32, 0.05);
     }
   `}
 `;
 
 const ReminderCard = styled.div`
-  background: white;
+  background: #F5F2E9;
   padding: 1rem;
-  margin: 0.5rem;
-  border-radius: 1rem;
-  border: 3px solid #1f2937;
+  margin: 0.5rem 0;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 4px 4px 0px 0px #2C2420;
   display: flex;
   align-items: center;
   gap: 1rem;
   position: relative;
+  transition: all 0.3s;
+  
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
+  }
 `;
 
 const CardIcon = styled.div<{ $color?: string }>`
   width: 3rem;
   height: 3rem;
-  border-radius: 0.75rem;
-  background: ${props => props.$color || '#8b5cf6'};
+  border-radius: 0;
+  background: ${props => props.$color || 'linear-gradient(135deg, #782221, #9B2C2C)'};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   flex-shrink: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const CardContent = styled.div`
@@ -432,44 +486,48 @@ const CardContent = styled.div`
 `;
 
 const CardTitle = styled.div<{ $completed?: boolean }>`
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
-  color: #1f2937;
+  color: #2C2420;
   margin-bottom: 0.25rem;
   text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
+  font-family: var(--font-playfair), serif;
 `;
 
 const CardMeta = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #5D4037;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const CardNote = styled.div`
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: #5D4037;
   margin-top: 0.25rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-style: italic;
 `;
 
 const MenuButton = styled.button`
   background: transparent;
-  border: none;
+  border: 2px solid transparent;
   cursor: pointer;
   padding: 0.5rem;
-  color: #6b7280;
+  color: #5D4037;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+  border-radius: 0;
+  transition: all 0.3s;
   flex-shrink: 0;
   
   &:hover {
-    background: #f3f4f6;
-    color: #1f2937;
+    border-color: #2C2420;
+    color: #2C2420;
   }
 `;
 
@@ -477,35 +535,36 @@ const ActionMenu = styled.div<{ $show: boolean }>`
   position: absolute;
   right: 1rem;
   top: 3.5rem;
-  background: white;
-  border: 3px solid #1f2937;
-  border-radius: 0.75rem;
+  background: #F5F2E9;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   overflow: hidden;
   z-index: 10;
   min-width: 10rem;
   display: ${props => props.$show ? 'block' : 'none'};
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 4px 4px 0px 0px #2C2420;
 `;
 
 const ActionMenuItem = styled.button<{ $danger?: boolean }>`
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
-  background: white;
+  background: #F5F2E9;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
-  color: ${props => props.$danger ? '#dc2626' : '#1f2937'};
+  color: ${props => props.$danger ? '#782221' : '#2C2420'};
   font-size: 0.875rem;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:hover {
-    background: ${props => props.$danger ? '#fee2e2' : '#f9fafb'};
+    background: ${props => props.$danger ? 'rgba(120, 34, 33, 0.1)' : 'rgba(44, 36, 32, 0.05)'};
   }
   
   &:not(:last-child) {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   }
   
   svg {
@@ -517,11 +576,13 @@ const Badge = styled.span`
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.625rem;
-  background: #fee2e2;
-  color: #dc2626;
-  border-radius: 0.5rem;
+  background: rgba(120, 34, 33, 0.1);
+  color: #782221;
+  border-radius: 0;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid rgba(120, 34, 33, 0.3);
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 export default function RemindersPage() {

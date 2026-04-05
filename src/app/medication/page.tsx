@@ -9,16 +9,22 @@ import { UserPet } from '@/lib/supabase';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed, #fce7f3);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
-  background: white;
-  padding: 1rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -31,46 +37,55 @@ const HeaderLeft = styled.div`
 `;
 
 const BackButton = styled.button`
-  background: transparent;
-  border: none;
+  background: none;
+  border: 2px solid #2C2420;
   cursor: pointer;
-  color: #1f2937;
+  color: #2C2420;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    color: #f97316;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const Title = styled.h1`
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const AddButton = styled.button`
-  background: transparent;
-  border: none;
+  background: none;
+  border: 2px solid #2C2420;
   cursor: pointer;
-  color: #1f2937;
+  color: #2C2420;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    color: #f97316;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const TabContainer = styled.div`
-  background: white;
+  background: rgba(245, 242, 233, 0.95);
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const Tab = styled.button<{ $active?: boolean }>`
@@ -80,13 +95,15 @@ const Tab = styled.button<{ $active?: boolean }>`
   background: transparent;
   cursor: pointer;
   font-size: 0.875rem;
-  color: ${props => props.$active ? '#8b5cf6' : '#6b7280'};
-  border-bottom: ${props => props.$active ? '2px solid #8b5cf6' : '2px solid transparent'};
+  color: ${props => props.$active ? '#782221' : '#5D4037'};
+  border-bottom: ${props => props.$active ? '3px solid #782221' : '3px solid transparent'};
   transition: all 0.2s;
-  font-weight: ${props => props.$active ? '600' : '400'};
+  font-weight: ${props => props.$active ? '700' : '400'};
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   &:hover {
-    color: #8b5cf6;
+    color: #782221;
   }
 `;
 
@@ -95,39 +112,44 @@ const ContentContainer = styled.div`
 `;
 
 const EmptyState = styled.div`
-  background: white;
-  border-radius: 1.5rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 4rem 2rem;
   text-align: center;
   max-width: 60rem;
   margin: 0 auto;
-  border: 3px solid #1f2937;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   
   .icon-wrapper {
     width: 5rem;
     height: 5rem;
-    background: #8b5cf6;
-    border-radius: 1rem;
+    background: linear-gradient(135deg, #782221, #9B2C2C);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
     
     svg {
-      color: white;
+      color: #F5F2E9;
     }
   }
   
   h3 {
     font-size: 1.125rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     margin-bottom: 0.5rem;
+    font-family: var(--font-playfair), serif;
   }
   
   p {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #5D4037;
+    font-family: var(--font-dm-sans), sans-serif;
   }
 `;
 

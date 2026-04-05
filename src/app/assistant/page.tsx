@@ -60,8 +60,13 @@ const generateSystemPrompt = (selectedPet?: UserPet | null): string => {
 const Container = styled.div`
   display: flex;
   height: 100vh;
-  background: rgba(252, 253, 253, 1);
-  
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
+
   @keyframes blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
@@ -76,10 +81,11 @@ const MainContent = styled.div`
 `;
 
 const Header = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(245, 242, 233, 0.95);
   backdrop-filter: blur(10px);
   padding: 1.5rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(44, 36, 32, 0.1);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const HeaderContent = styled.div`
@@ -92,18 +98,20 @@ const HeaderContent = styled.div`
 const Title = styled.h1`
   font-size: 1.75rem;
   font-weight: 700;
-  color: #667eea;
+  color: #782221;
   margin: 0;
   text-align: center;
+  font-family: var(--font-playfair), serif;
 `;
 
 const PetSelector = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(120, 34, 33, 0.1);
   padding: 0.5rem 1rem;
-  border-radius: 1.5rem;
+  border-radius: 0;
+  border: 1px solid rgba(120, 34, 33, 0.2);
 `;
 
 const PetIcon = styled.div`
@@ -113,16 +121,17 @@ const PetIcon = styled.div`
 const PetSelect = styled.select`
   background: transparent;
   border: none;
-  color: #667eea;
+  color: #782221;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   outline: none;
   padding: 0.25rem 0.5rem;
-  
+  font-family: var(--font-cinzel), serif;
+
   option {
-    background: white;
-    color: #333;
+    background: #F5F2E9;
+    color: #2C2420;
   }
 `;
 
@@ -305,50 +314,56 @@ const ActionButton = styled.button`
 const MessageBubble = styled.div<{ $isUser: boolean }>`
   max-width: 70%;
   padding: 1rem 1.25rem;
-  border-radius: ${props => props.$isUser ? '1.25rem 1.25rem 0.25rem 1.25rem' : '1.25rem 1.25rem 1.25rem 0.25rem'};
-  background: ${props => props.$isUser 
-    ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  border-radius: 0;
+  background: ${props => props.$isUser
+    ? '#782221'
     : 'rgba(255, 255, 255, 0.95)'};
-  color: ${props => props.$isUser ? 'white' : '#333'};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: ${props => props.$isUser ? '#F5F2E9' : '#2C2420'};
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  border: 2px solid #2C2420;
   word-wrap: break-word;
   line-height: 1.5;
-  
+  font-family: var(--font-dm-sans), sans-serif;
+
   /* Markdown 样式 */
   p {
     margin: 0.5rem 0;
   }
-  
+
   code {
     background: ${props => props.$isUser ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)'};
     padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
+    border-radius: 0;
     font-family: 'Courier New', monospace;
+    border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};
   }
-  
+
   pre {
     background: ${props => props.$isUser ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)'};
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 0;
     overflow-x: auto;
-    
+    border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};
+
     code {
       background: none;
       padding: 0;
+      border: none;
     }
   }
-  
+
   ul, ol {
     margin: 0.5rem 0;
     padding-left: 1.5rem;
   }
-  
+
   li {
     margin: 0.25rem 0;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     margin: 1rem 0 0.5rem 0;
+    font-family: var(--font-playfair), serif;
   }
 `;
 
@@ -360,10 +375,11 @@ const RoleLabel = styled.div<{ $isUser: boolean }>`
 `;
 
 const InputContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(245, 242, 233, 0.95);
   backdrop-filter: blur(10px);
   padding: 1.5rem 2rem;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -2px 4px rgba(44, 36, 32, 0.1);
+  border-top: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const InputWrapper = styled.div`
@@ -376,17 +392,19 @@ const InputWrapper = styled.div`
 const Input = styled.input`
   flex: 1;
   padding: 1rem 1.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 2rem;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
-  
-  // &:focus {
-  //   border-color: #667eea;
-  //   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  // }
-  
+  background: white;
+  font-family: var(--font-dm-sans), sans-serif;
+
+  &:focus {
+    border-color: #782221;
+    box-shadow: 4px 4px 0px 0px rgba(120, 34, 33, 0.2);
+  }
+
   &::placeholder {
     color: #9ca3af;
   }
@@ -394,24 +412,30 @@ const Input = styled.input`
 
 const SendButton = styled.button`
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 2rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
+    background: #9B2C2C;
   }
-  
+
   &:active {
-    transform: translateY(0);
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0px 0px #2C2420;
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;

@@ -11,21 +11,33 @@ import { petCategories } from '@/data/petNavigation';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom, #fff7ed, #ffffff);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
-  background: white;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 16px 20px;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(44, 36, 32, 0.1);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   z-index: 100;
 `;
 
 const HeaderContent = styled.div`
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,77 +46,93 @@ const HeaderContent = styled.div`
 const BackButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: none;
-  background: #f5f5f5;
-  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #2C2420;
+  background: transparent;
+  border-radius: 0;
   cursor: pointer;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.2s;
+  color: #2C2420;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   &:hover {
-    background: #e8e8e8;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const ActionButtons = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 `;
 
 const ActionButton = styled.button`
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #2C2420;
+  background: transparent;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #666;
-  transition: all 0.2s;
+  gap: 0.375rem;
+  color: #2C2420;
+  font-weight: 500;
+  transition: all 0.3s;
 
   &:hover {
-    border-color: #ff6b35;
-    color: #ff6b35;
+    background: #2C2420;
+    color: #F5F2E9;
   }
 `;
 
 const MainContent = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 2rem 1.25rem;
+  padding-top: 96px;
 `;
 
 const PetHero = styled.div`
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  background: #F5F2E9;
+  border-radius: 0;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 8px 8px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 2.5rem;
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 12px 12px 0px 0px #2C2420;
+    transform: translate(-2px, -2px);
+  }
 `;
 
 const PetIcon = styled.div`
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff9a85, #ff6b35);
+  background: linear-gradient(135deg, #C5A059, #782221);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 60px;
-  box-shadow: 0 8px 30px rgba(255,107,53,0.4);
+  border: 3px solid #2C2420;
+  box-shadow: 4px 4px 0px 0px #2C2420;
   overflow: hidden;
+  flex-shrink: 0;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: sepia(0.15) contrast(1.05);
   }
 `;
 
@@ -113,76 +141,104 @@ const PetInfo = styled.div`
 `;
 
 const PetName = styled.h1`
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 700;
-  color: #333;
-  margin: 0 0 12px 0;
+  color: #2C2420;
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const PetCategory = styled.div`
-  font-size: 16px;
-  color: #ff6b35;
-  font-weight: 500;
-  margin-bottom: 16px;
+  display: inline-block;
+  font-size: 0.875rem;
+  color: #F5F2E9;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  background: #782221;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 `;
 
 const PetDescription = styled.p`
-  font-size: 16px;
-  color: #666;
-  line-height: 1.6;
+  font-size: 1rem;
+  color: #5D4037;
+  line-height: 1.8;
   margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const SectionGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 24px;
-  margin-top: 30px;
+  gap: 1.5rem;
+  margin-top: 2rem;
 `;
 
 const Section = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #F5F2E9;
+  border-radius: 0;
+  padding: 1.5rem;
+  box-shadow: 6px 6px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #2C2420;
+  }
 `;
 
 const SectionHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const SectionIcon = styled.div`
   width: 40px;
   height: 40px;
-  border-radius: 8px;
-  background: #ff6b35;
+  border-radius: 0;
+  background: linear-gradient(135deg, #782221, #9B2C2C);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const SectionTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const SectionContent = styled.div`
-  color: #666;
-  line-height: 1.6;
+  color: #5D4037;
+  line-height: 1.8;
+  font-family: var(--font-dm-sans), sans-serif;
 
   ul {
     margin: 0;
-    padding-left: 20px;
+    padding-left: 1.25rem;
   }
 
   li {
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    strong {
+      color: #2C2420;
+    }
   }
 `;
 
@@ -192,92 +248,98 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(44, 36, 32, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 1.25rem;
 `;
 
 const ModalContent = styled.div`
-  background: #fef7ed;
-  border-radius: 24px;
-  padding: 32px;
+  background: #F5F2E9;
+  border-radius: 0;
+  padding: 2rem;
   max-width: 600px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 8px 8px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
   position: relative;
 `;
 
 const ModalHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 `;
 
 const ModalIconWrapper = styled.div`
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #8b7aff, #6b5bff);
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0;
+  background: linear-gradient(135deg, #782221, #9B2C2C);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const ModalTitle = styled.h2`
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #333;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  border: none;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #2C2420;
   background: transparent;
   cursor: pointer;
-  color: #666;
+  color: #2C2420;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: 0;
+  transition: all 0.3s;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #333;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const PetTag = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: white;
-  border: 2px solid #f0f0f0;
-  border-radius: 16px;
-  margin-bottom: 24px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid #2C2420;
+  border-radius: 0;
+  margin-bottom: 1.5rem;
 `;
 
 const PetTagIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #ff9a85, #ff6b35);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0;
+  background: linear-gradient(135deg, #C5A059, #782221);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 1rem;
   overflow: hidden;
+  border: 1px solid #2C2420;
 
   img {
     width: 100%;
@@ -287,118 +349,129 @@ const PetTagIcon = styled.div`
 `;
 
 const PetTagText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: #2C2420;
+  font-family: var(--font-cinzel), serif;
 `;
 
 const ModalDescription = styled.p`
-  color: #999;
-  font-size: 14px;
+  color: #5D4037;
+  font-size: 0.875rem;
   line-height: 1.6;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const InputLabel = styled.label`
   display: block;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 12px;
+  color: #2C2420;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const InputWrapper = styled.div`
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 `;
 
 const SearchIcon = styled.div`
   position: absolute;
-  left: 16px;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b5bff;
+  color: #782221;
   display: flex;
   align-items: center;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 16px 16px 16px 48px;
-  border: 2px solid #e0e0e0;
-  border-radius: 16px;
-  font-size: 16px;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
+  font-size: 1rem;
   outline: none;
   transition: all 0.2s;
   background: white;
+  font-family: var(--font-dm-sans), sans-serif;
 
   &::placeholder {
-    color: #ccc;
+    color: #aaa;
   }
 
   &:focus {
-    border-color: #6b5bff;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
 const ModalActions = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   justify-content: flex-end;
 `;
 
 const Button = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'variant'
 })<{ variant?: 'primary' | 'secondary' }>`
-  padding: 14px 32px;
-  border-radius: 16px;
-  font-size: 16px;
+  padding: 0.875rem 2rem;
+  border-radius: 0;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  border: none;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   ${props => props.variant === 'primary' ? `
-    background: linear-gradient(135deg, #8b7aff, #6b5bff);
-    color: white;
+    background: #782221;
+    color: #F5F2E9;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
 
     &:hover {
-      background: linear-gradient(135deg, #7a69ee, #5a4bee);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px 0px #2C2420;
     }
   ` : `
     background: transparent;
-    color: #666;
+    color: #5D4037;
+    border: 2px solid rgba(44, 36, 32, 0.3);
 
     &:hover {
-      background: rgba(0, 0, 0, 0.05);
+      border-color: #2C2420;
+      color: #2C2420;
     }
   `}
 `;
 
 const SectionButton = styled.button`
-  margin-top: 16px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #8b7aff, #6b5bff);
-  color: white;
-  border: none;
-  border-radius: 12px;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
+  gap: 0.5rem;
+  transition: all 0.3s;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   &:hover {
-    background: linear-gradient(135deg, #7a69ee, #5a4bee);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(107, 91, 255, 0.3);
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px #2C2420;
   }
 `;
 
@@ -454,9 +527,9 @@ export default function PetDetailPage() {
           </HeaderContent>
         </Header>
         <MainContent>
-          <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-            <h2>加载中...</h2>
-            <p>正在获取宠物信息</p>
+          <div style={{ textAlign: 'center', paddingTop: '100px', color: '#2C2420', fontFamily: 'var(--font-playfair), serif' }}>
+            <h2 style={{ marginBottom: '0.5rem' }}>加载中...</h2>
+            <p style={{ color: '#5D4037', fontFamily: 'var(--font-dm-sans), sans-serif' }}>正在获取宠物信息</p>
           </div>
         </MainContent>
       </Container>
@@ -477,9 +550,9 @@ export default function PetDetailPage() {
           </HeaderContent>
         </Header>
         <MainContent>
-          <div style={{ textAlign: 'center', paddingTop: '100px' }}>
-            <h2>宠物信息未找到</h2>
-            <p>请检查链接是否正确</p>
+          <div style={{ textAlign: 'center', paddingTop: '100px', color: '#2C2420', fontFamily: 'var(--font-playfair), serif' }}>
+            <h2 style={{ marginBottom: '0.5rem' }}>宠物信息未找到</h2>
+            <p style={{ color: '#5D4037', fontFamily: 'var(--font-dm-sans), sans-serif' }}>请检查链接是否正确</p>
           </div>
         </MainContent>
       </Container>
@@ -650,7 +723,7 @@ export default function PetDetailPage() {
                   </>
                 )}
               </ul>
-              <SectionButton style={{ background: 'linear-gradient(135deg, #ff9a85, #ff6b35)' }}>
+              <SectionButton>
                 <Bot size={18} />
                 开始咨询
               </SectionButton>

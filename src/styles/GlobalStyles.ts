@@ -10,17 +10,20 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   html {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: #ffffff;
-    color: #111827;
+    background-color: #F5F2E9;
+    color: #2C2420;
     line-height: 1.6;
+    font-family: var(--font-dm-sans), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), serif;
   }
 
   a {
@@ -42,5 +45,21 @@ export const GlobalStyles = createGlobalStyle`
   img {
     max-width: 100%;
     height: auto;
+  }
+
+  /* 隐藏滚动条 */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* 选中文本样式 */
+  ::selection {
+    background: #782221;
+    color: white;
   }
 `;

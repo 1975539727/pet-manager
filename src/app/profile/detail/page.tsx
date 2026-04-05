@@ -9,37 +9,55 @@ import Link from 'next/link';
 const Container = styled.div`
   width: 100%;
   padding: 0;
-  background: #f9fafb;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   min-height: 100vh;
+  padding-top: 96px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
+  z-index: 100;
 `;
 
 const BackButton = styled.button`
   background: none;
-  border: none;
+  border: 2px solid #2C2420;
   cursor: pointer;
-  color: #1f2937;
+  color: #2C2420;
   display: flex;
   align-items: center;
   padding: 0.5rem;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    color: #ea580c;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const Title = styled.h1`
   font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const Content = styled.div`
@@ -50,39 +68,48 @@ const Content = styled.div`
 `;
 
 const ProfileCard = styled.div`
-  background: white;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 1.5rem;
-  border: 2px solid #000;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   display: flex;
   align-items: center;
   gap: 1rem;
   position: relative;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #2C2420;
+  }
 `;
 
 const Avatar = styled.div<{ $hasImage: boolean }>`
   width: 4.5rem;
   height: 4.5rem;
-  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)'};
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #C5A059, #782221)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
   font-size: 2rem;
   flex-shrink: 0;
   overflow: hidden;
+  border: 3px solid #2C2420;
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: sepia(0.15) contrast(1.05);
   }
 `;
 
 const AvatarIcon = styled.div`
   font-size: 1.75rem;
-  color: #f87171;
+  color: #F5F2E9;
 `;
 
 const UserInfoContainer = styled.div`
@@ -91,32 +118,39 @@ const UserInfoContainer = styled.div`
 
 const UserName = styled.h2`
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 0.25rem 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const UserInfo = styled.p`
-  color: #6b7280;
+  color: #5D4037;
   font-size: 0.875rem;
   margin: 0.25rem 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const EditButton = styled.button`
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   &:hover {
-    background: #6d28d9;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px #2C2420;
   }
 `;
 
@@ -126,16 +160,18 @@ const Section = styled.div`
 
 const SectionTitle = styled.h3`
   font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 1rem 0;
   padding: 0 0 0 1rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const DetailCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  border: 2px solid #000;
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   overflow: hidden;
 `;
 
@@ -144,7 +180,7 @@ const DetailItem = styled.div`
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   
   &:last-child {
     border-bottom: none;
@@ -154,13 +190,15 @@ const DetailItem = styled.div`
 const DetailIcon = styled.div`
   width: 2.5rem;
   height: 2.5rem;
-  background: #7c3aed;
-  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #782221, #9B2C2C);
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
   flex-shrink: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
 `;
 
 const DetailContent = styled.div`
@@ -169,28 +207,34 @@ const DetailContent = styled.div`
 
 const DetailLabel = styled.div`
   font-size: 1rem;
-  font-weight: 500;
-  color: #1f2937;
+  font-weight: 600;
+  color: #2C2420;
   margin-bottom: 0.25rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const DetailValue = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #5D4037;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const ActionButton = styled.button`
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 2px 2px 0px 0px #2C2420;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
   
   &:hover {
-    background: #6d28d9;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px #2C2420;
   }
 `;
 

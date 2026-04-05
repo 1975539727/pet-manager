@@ -8,15 +8,21 @@ import { useRouter } from 'next/navigation';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #f9fafb;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -24,26 +30,30 @@ const Header = styled.div`
 
 const BackButton = styled.button`
   background: none;
-  border: none;
+  border: 2px solid #2C2420;
   padding: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1f2937;
+  color: #2C2420;
   margin-right: 1rem;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    background: #f3f4f6;
-    border-radius: 0.375rem;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const Title = styled.h1`
   font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const Content = styled.div`
@@ -51,10 +61,11 @@ const Content = styled.div`
 `;
 
 const Card = styled.div`
-  background: white;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 1.5rem;
-  border: 2px solid #000;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
 `;
 
 const Form = styled.form`
@@ -71,8 +82,9 @@ const InputGroup = styled.div`
 
 const Label = styled.label`
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: #2C2420;
+  font-family: var(--font-playfair), serif;
 `;
 
 const InputWrapper = styled.div`
@@ -82,19 +94,22 @@ const InputWrapper = styled.div`
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem 3rem 0.75rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   transition: all 0.2s;
+  background: white;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 
   &::placeholder {
-    color: #9ca3af;
+    color: #aaa;
   }
 `;
 
@@ -105,7 +120,7 @@ const PasswordToggle = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #9ca3af;
+  color: #5D4037;
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -113,85 +128,93 @@ const PasswordToggle = styled.button`
   justify-content: center;
   
   &:hover {
-    color: #667eea;
+    color: #782221;
   }
 `;
 
 const HelperText = styled.p`
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #5D4037;
   margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
   padding: 0.875rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   margin-top: 0.5rem;
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   &:hover:not(:disabled) {
-    background: #5568d3;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
   }
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
     transform: none;
+    box-shadow: 4px 4px 0px 0px #2C2420;
   }
 `;
 
 const Message = styled.div<{ type: 'success' | 'error' }>`
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 2px solid #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   ${props => props.type === 'success' && `
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: rgba(197, 160, 89, 0.2);
+    color: #2C2420;
+    border-color: #C5A059;
   `}
   
   ${props => props.type === 'error' && `
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: rgba(120, 34, 33, 0.1);
+    color: #782221;
+    border-color: #782221;
   `}
 `;
 
 const TipCard = styled.div`
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 0.5rem;
+  background: rgba(197, 160, 89, 0.1);
+  border: 2px solid #C5A059;
+  border-radius: 0;
   padding: 1rem;
   margin-top: 1rem;
 `;
 
 const TipTitle = styled.h3`
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #1e40af;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const TipList = styled.ul`
   margin: 0;
   padding-left: 1.25rem;
-  color: #1e40af;
+  color: #5D4037;
   font-size: 0.75rem;
   line-height: 1.6;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 interface FormData {

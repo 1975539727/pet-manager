@@ -9,20 +9,34 @@ import { compressImage, validateImageFile, convertImageToBase64 } from '@/lib/ap
 const Container = styled.div`
   width: 100%;
   padding: 0;
-  background: #f9fafb;
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   min-height: 100vh;
+  padding-top: 96px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Header = styled.div`
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
+  z-index: 100;
 `;
 
 const Title = styled.h1`
   font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const Content = styled.div`
@@ -33,10 +47,11 @@ const Content = styled.div`
 `;
 
 const AvatarSection = styled.div`
-  background: white;
-  border-radius: 1rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 1.5rem;
-  border: 2px solid #000;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -45,68 +60,79 @@ const AvatarSection = styled.div`
 const Avatar = styled.div<{ $hasImage: boolean }>`
   width: 4.5rem;
   height: 4.5rem;
-  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)'};
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #C5A059, #782221)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F2E9;
   font-size: 2rem;
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
+  border: 3px solid #2C2420;
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: sepia(0.15) contrast(1.05);
   }
 `;
 
 const AvatarIcon = styled.div`
   font-size: 1.75rem;
-  color: #f87171;
+  color: #F5F2E9;
 `;
 
 const UploadButton = styled.button`
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
   
   &:hover {
-    background: #6d28d9;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px #2C2420;
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: 3px 3px 0px 0px #2C2420;
   }
 `;
 
 const RemoveAvatarButton = styled.button`
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  background: transparent;
+  color: #2C2420;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-left: 0.5rem;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
   
   &:hover {
-    background: #dc2626;
+    background: #2C2420;
+    color: #F5F2E9;
   }
   
   &:disabled {
@@ -131,16 +157,18 @@ const Section = styled.div`
 
 const SectionTitle = styled.h3`
   font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0 0 1rem 0;
   padding: 0 0 0 1rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const FormCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  border: 2px solid #000;
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   padding: 1.5rem;
 `;
 
@@ -155,9 +183,10 @@ const FormItem = styled.div`
 const FormLabel = styled.label`
   display: block;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #1f2937;
+  font-weight: 600;
+  color: #2C2420;
   margin-bottom: 0.5rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 const InputWrapper = styled.div`
@@ -174,75 +203,84 @@ const IconWrapper = styled.div`
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  background: #7c3aed;
-  border-radius: 0.5rem;
-  color: white;
+  background: linear-gradient(135deg, #782221, #9B2C2C);
+  border-radius: 0;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 4.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
-  color: #1f2937;
+  color: #2C2420;
+  background: white;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:focus {
     outline: none;
-    border-color: #7c3aed;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: #aaa;
   }
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 4.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
-  color: #1f2937;
+  color: #2C2420;
   min-height: 120px;
   resize: vertical;
-  font-family: inherit;
+  font-family: var(--font-dm-sans), sans-serif;
+  background: white;
   
   &:focus {
     outline: none;
-    border-color: #7c3aed;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: #aaa;
   }
 `;
 
 const Select = styled.select`
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 4.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
-  color: #1f2937;
+  color: #2C2420;
   background: white;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  font-family: var(--font-dm-sans), sans-serif;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%232C2420' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   
   &:focus {
     outline: none;
-    border-color: #7c3aed;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
 const CharCount = styled.div`
   text-align: right;
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #5D4037;
   margin-top: 0.25rem;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const ButtonGroup = styled.div`
@@ -254,10 +292,10 @@ const ButtonGroup = styled.div`
 
 const SaveButton = styled.button`
   width: 100%;
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 1rem;
+  background: #782221;
+  color: #F5F2E9;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
@@ -266,31 +304,40 @@ const SaveButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 2px solid #000;
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   &:hover {
-    background: #6d28d9;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
   }
   
   &:disabled {
-    background: #9ca3af;
+    opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: 4px 4px 0px 0px #2C2420;
   }
 `;
 
 const CancelButton = styled.button`
   width: 100%;
-  background: white;
-  color: #1f2937;
-  border: 2px solid #000;
-  border-radius: 1rem;
+  background: transparent;
+  color: #2C2420;
+  border: 3px solid #2C2420;
+  border-radius: 0;
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   &:hover {
-    background: #f9fafb;
+    background: rgba(44, 36, 32, 0.05);
   }
 `;
 

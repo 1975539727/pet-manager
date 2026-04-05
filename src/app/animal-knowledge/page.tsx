@@ -9,41 +9,56 @@ import { AnimalKnowledge } from '@/lib/supabase';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   padding-bottom: 2rem;
+  padding-top: 96px;
 `;
 
 const Header = styled.div`
-  background: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(44, 36, 32, 0.1);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
+  z-index: 50;
 `;
 
 const BackButton = styled.button`
   background: none;
-  border: none;
-  color: #374151;
+  border: 2px solid #2C2420;
+  color: #2C2420;
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s;
+  border-radius: 0;
+  transition: all 0.3s;
 
   &:hover {
-    background-color: #f3f4f6;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const Title = styled.h1`
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const Content = styled.div`
@@ -53,16 +68,17 @@ const Content = styled.div`
 `;
 
 const KnowledgeCard = styled.div`
-  background: white;
-  border-radius: 1.5rem;
+  background: #F5F2E9;
+  border-radius: 0;
   padding: 2rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 6px 6px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
+  transition: all 0.3s;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #2C2420;
   }
 `;
 
@@ -72,19 +88,22 @@ const KnowledgeHeader = styled.div`
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f3f4f6;
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
 
 const DateBadge = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #782221;
+  color: #F5F2E9;
   padding: 0.5rem 1rem;
-  border-radius: 1rem;
+  border-radius: 0;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 2px solid #2C2420;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
 
   svg {
     width: 16px;
@@ -92,31 +111,21 @@ const DateBadge = styled.div`
   }
 `;
 
-const CategoryTag = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: #fef3c7;
-  color: #92400e;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-`;
-
 const KnowledgeContent = styled.p`
   font-size: 1rem;
   line-height: 1.8;
-  color: #374151;
+  color: #2C2420;
   margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #F5F2E9;
+  border-radius: 0;
+  box-shadow: 6px 6px 0px 0px #2C2420;
+  border: 3px solid #2C2420;
 `;
 
 const EmptyIcon = styled.div`
@@ -126,15 +135,17 @@ const EmptyIcon = styled.div`
 
 const EmptyText = styled.p`
   font-size: 1.125rem;
-  color: #6b7280;
+  color: #5D4037;
   margin: 0;
+  font-family: var(--font-playfair), serif;
 `;
 
 const LoadingState = styled.div`
   text-align: center;
   padding: 4rem 2rem;
-  color: white;
+  color: #2C2420;
   font-size: 1.125rem;
+  font-family: var(--font-playfair), serif;
 `;
 
 export default function AnimalKnowledgePage() {
@@ -189,7 +200,6 @@ export default function AnimalKnowledgePage() {
                   <Calendar />
                   {formatDateTime(knowledge.publish_datetime)}
                 </DateBadge>
-                <CategoryTag>趣味</CategoryTag>
               </KnowledgeHeader>
               <KnowledgeContent>{knowledge.content}</KnowledgeContent>
             </KnowledgeCard>
