@@ -81,9 +81,11 @@ const MainContent = styled.div`
 `;
 
 const Header = styled.div`
+  position: relative;
+  z-index: 10;
   background: rgba(245, 242, 233, 0.95);
   backdrop-filter: blur(10px);
-  padding: 1.5rem 2rem;
+  padding: 2.5rem 2rem 2rem;
   box-shadow: 0 2px 4px rgba(44, 36, 32, 0.1);
   border-bottom: 2px solid rgba(44, 36, 32, 0.1);
 `;
@@ -104,35 +106,131 @@ const Title = styled.h1`
   font-family: var(--font-playfair), serif;
 `;
 
-const PetSelector = styled.div`
+const PetSelectorWrapper = styled.div`
+  position: relative;
+  z-index: 20;
+`;
+
+const PetSelectorButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(120, 34, 33, 0.1);
+  gap: 0.75rem;
+  background: #F5F2E9;
   padding: 0.5rem 1rem;
   border-radius: 0;
-  border: 1px solid rgba(120, 34, 33, 0.2);
-`;
-
-const PetIcon = styled.div`
-  font-size: 1.2rem;
-`;
-
-const PetSelect = styled.select`
-  background: transparent;
-  border: none;
-  color: #782221;
-  font-size: 1rem;
-  font-weight: 600;
+  border: 2px solid #2C2420;
+  box-shadow: 3px 3px 0px 0px #2C2420;
   cursor: pointer;
-  outline: none;
-  padding: 0.25rem 0.5rem;
+  transition: all 0.3s;
   font-family: var(--font-cinzel), serif;
 
-  option {
-    background: #F5F2E9;
-    color: #2C2420;
+  &:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px #2C2420;
   }
+`;
+
+const PetSelectorAvatar = styled.div`
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C5A059, #782221);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #2C2420;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    font-size: 1rem;
+  }
+`;
+
+const PetSelectorText = styled.span`
+  color: #2C2420;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+`;
+
+const PetSelectorArrow = styled.span<{ $open: boolean }>`
+  color: #2C2420;
+  font-size: 0.75rem;
+  transition: transform 0.3s;
+  transform: ${props => props.$open ? 'rotate(180deg)' : 'rotate(0)'};
+`;
+
+const PetDropdownList = styled.div<{ $show: boolean }>`
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 220px;
+  background: #F5F2E9;
+  border: 2px solid #2C2420;
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  display: ${props => props.$show ? 'block' : 'none'};
+  z-index: 30;
+  overflow: hidden;
+`;
+
+const PetDropdownItem = styled.button<{ $active: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border: none;
+  background: ${props => props.$active ? 'rgba(120, 34, 33, 0.12)' : '#F5F2E9'};
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 600;
+  color: #2C2420;
+  text-align: left;
+
+  &:hover {
+    background: rgba(120, 34, 33, 0.08);
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(44, 36, 32, 0.15);
+  }
+`;
+
+const PetDropdownAvatar = styled.div`
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C5A059, #782221);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #2C2420;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    font-size: 1.1rem;
+  }
+`;
+
+const PetDropdownName = styled.span`
+  font-size: 0.95rem;
+  color: #2C2420;
 `;
 
 const DeleteChatButton = styled.button`
@@ -566,6 +664,8 @@ export default function AssistantPage() {
   const [pets, setPets] = useState<UserPet[]>([]);
   const [selectedPet, setSelectedPet] = useState<UserPet | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showPetDropdown, setShowPetDropdown] = useState(false);
+  const petSelectorRef = useRef<HTMLDivElement>(null);
 
   // 快捷提问数据
   const quickQuestions: QuickQuestion[] = [
@@ -575,6 +675,21 @@ export default function AssistantPage() {
     { question: '它疫苗多久打一次?', count: 1 },
     { question: '它驱虫多久做一次合适?', count: 0 },
   ];
+
+  // 点击外部关闭宠物下拉框
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (petSelectorRef.current && !petSelectorRef.current.contains(event.target as Node)) {
+        setShowPetDropdown(false);
+      }
+    };
+    if (showPetDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPetDropdown]);
 
   // 加载用户的宠物列表
   useEffect(() => {
@@ -904,32 +1019,44 @@ export default function AssistantPage() {
           <HeaderContent>
             <Title>🐾 智能宠物助手</Title>
             {pets.length > 0 && (
-              <PetSelector>
-                <PetIcon>🐾</PetIcon>
-                <PetSelect 
-                  value={selectedPet?.id || ''} 
-                  onChange={(e) => {
-                    const pet = pets.find(p => p.id === e.target.value);
-                    setSelectedPet(pet || null);
-                  }}
-                >
-                  {pets.map(pet => {
-                    // 从notes中解析宠物类型
-                    let petType = '🐾';
-                    try {
-                      const notes = JSON.parse(pet.notes || '{}');
-                      if (notes.category === 'dog') petType = '🐕';
-                      else if (notes.category === 'cat') petType = '🐱';
-                    } catch (e) {}
-                    
-                    return (
-                      <option key={pet.id} value={pet.id}>
-                        {petType} {pet.name} {pet.custom_breed ? `(${pet.custom_breed})` : ''}
-                      </option>
-                    );
-                  })}
-                </PetSelect>
-              </PetSelector>
+              <PetSelectorWrapper ref={petSelectorRef}>
+                <PetSelectorButton onClick={() => setShowPetDropdown(!showPetDropdown)}>
+                  <PetSelectorAvatar>
+                    {(selectedPet?.avatar_url || selectedPet?.photo_url) ? (
+                      <img src={selectedPet.avatar_url || selectedPet.photo_url} alt={selectedPet.name} />
+                    ) : (
+                      <div className="placeholder">🐾</div>
+                    )}
+                  </PetSelectorAvatar>
+                  <PetSelectorText>
+                    {selectedPet?.name || '选择宠物'} {selectedPet?.custom_breed ? `(${selectedPet.custom_breed})` : ''}
+                  </PetSelectorText>
+                  <PetSelectorArrow $open={showPetDropdown}>▼</PetSelectorArrow>
+                </PetSelectorButton>
+                <PetDropdownList $show={showPetDropdown}>
+                  {pets.map(pet => (
+                    <PetDropdownItem
+                      key={pet.id}
+                      $active={selectedPet?.id === pet.id}
+                      onClick={() => {
+                        setSelectedPet(pet);
+                        setShowPetDropdown(false);
+                      }}
+                    >
+                      <PetDropdownAvatar>
+                        {(pet.avatar_url || pet.photo_url) ? (
+                          <img src={pet.avatar_url || pet.photo_url} alt={pet.name} />
+                        ) : (
+                          <div className="placeholder">🐾</div>
+                        )}
+                      </PetDropdownAvatar>
+                      <PetDropdownName>
+                        {pet.name} {pet.custom_breed ? `(${pet.custom_breed})` : ''}
+                      </PetDropdownName>
+                    </PetDropdownItem>
+                  ))}
+                </PetDropdownList>
+              </PetSelectorWrapper>
             )}
           </HeaderContent>
         </Header>

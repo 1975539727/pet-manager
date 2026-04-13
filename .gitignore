@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 论文相关文件
+关键词.txt
+摘要.txt
+第一章 绪论/
+第二章 技术概述/

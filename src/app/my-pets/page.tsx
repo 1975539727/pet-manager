@@ -187,18 +187,20 @@ const MoreButtonWrapper = styled.div`
 const MoreButton = styled.button`
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
-  border: none;
+  border-radius: 0;
+  border: 2px solid #2C2420;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #6b7280;
-  transition: background 0.2s;
+  color: #2C2420;
+  transition: all 0.3s;
   
   &:hover {
-    background: #f3f4f6;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
@@ -206,9 +208,10 @@ const DropdownMenu = styled.div<{ $show: boolean }>`
   position: absolute;
   top: 3rem;
   right: 0;
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 4px 4px 0px 0px #2C2420;
   overflow: hidden;
   display: ${props => props.$show ? 'block' : 'none'};
   z-index: 10;
@@ -219,31 +222,34 @@ const MenuItem = styled.button<{ $variant?: 'blue' | 'red' }>`
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
-  background: white;
+  background: #F5F2E9;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.875rem;
-  transition: background 0.2s;
+  transition: all 0.3s;
   text-align: left;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 600;
   
   ${props => props.$variant === 'blue' ? `
-    color: #3b82f6;
+    color: #2C2420;
     
     &:hover {
-      background: #eff6ff;
+      background: rgba(120, 34, 33, 0.08);
+      color: #782221;
     }
   ` : `
-    color: #ef4444;
+    color: #782221;
     
     &:hover {
-      background: #fef2f2;
+      background: rgba(120, 34, 33, 0.12);
     }
   `}
   
   &:not(:last-child) {
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(44, 36, 32, 0.15);
   }
 `;
 
@@ -494,7 +500,7 @@ const DiscoverGrid = styled.div`
 
 const DiscoverCard = styled.button<{ $bgColor?: string }>`
   position: relative;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 5rem;
   border-radius: 0;
   border: 3px solid #2C2420;
   background: ${props => props.$bgColor || 'rgba(197, 160, 89, 0.15)'};
@@ -783,7 +789,7 @@ export default function MyPetsPage() {
       setUserId(userData.id);
       loadPets(userData.id);
     } else {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [router]);
   

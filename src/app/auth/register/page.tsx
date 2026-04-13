@@ -2,68 +2,158 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Mail, User, Eye, EyeOff, Scroll } from 'lucide-react';
 import styled from 'styled-components';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 120px 20px 40px;
+  font-family: var(--font-dm-sans), sans-serif;
 `;
 
 const Card = styled.div`
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
+  background: #F5F2E9;
+  border-radius: 0;
+  padding: 48px 40px;
   width: 100%;
-  max-width: 450px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  max-width: 480px;
+  border: 3px solid #2C2420;
+  box-shadow: 8px 8px 0px 0px #2C2420;
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 12px 12px 0px 0px #2C2420;
+    transform: translate(-2px, -2px);
+  }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 `;
 
 const BackButton = styled(Link)`
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 120px;
+  left: 24px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  padding: 10px 20px;
+  background: transparent;
+  color: #2C2420;
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-  backdrop-filter: blur(10px);
+  border-radius: 0;
+  font-weight: 700;
+  transition: all 0.3s;
+  border: 2px solid #2C2420;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-cinzel), serif;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px #2C2420;
   }
 `;
 
-const Logo = styled.div`
-  font-size: 48px;
-  margin-bottom: 16px;
+const LogoIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  .logo-wrapper {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #782221, #9B2C2C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
+    color: #F5F2E9;
+  }
 `;
 
 const Title = styled.h1`
   font-size: 28px;
   font-weight: 700;
-  color: #333;
+  color: #2C2420;
   margin-bottom: 8px;
+  font-family: var(--font-playfair), serif;
 `;
 
 const Subtitle = styled.p`
-  color: #666;
-  font-size: 16px;
+  color: #5D4037;
+  font-size: 14px;
+  font-family: var(--font-dm-sans), sans-serif;
+`;
+
+const Divider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(44, 36, 32, 0.2);
+  }
+
+  span {
+    font-size: 10px;
+    color: #5D4037;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-family: var(--font-cinzel), serif;
+    font-weight: 600;
+  }
+`;
+
+const StepIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+`;
+
+const StepDot = styled.div<{ $active: boolean; $completed: boolean }>`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid ${props => props.$active || props.$completed ? '#782221' : '#2C2420'};
+  background: ${props => props.$active ? '#782221' : props.$completed ? '#C5A059' : 'transparent'};
+  color: ${props => props.$active || props.$completed ? '#F5F2E9' : '#2C2420'};
+  font-family: var(--font-cinzel), serif;
+  transition: all 0.3s;
+`;
+
+const StepLine = styled.div<{ $active: boolean }>`
+  width: 40px;
+  height: 2px;
+  background: ${props => props.$active ? '#782221' : 'rgba(44, 36, 32, 0.2)'};
+  transition: all 0.3s;
 `;
 
 const Form = styled.form`
@@ -72,26 +162,40 @@ const Form = styled.form`
   gap: 20px;
 `;
 
+const InputLabel = styled.label`
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2C2420;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-cinzel), serif;
+`;
+
 const InputGroup = styled.div`
   position: relative;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 16px 48px 16px 16px;
-  border: 2px solid #f0f0f0;
-  border-radius: 8px;
+  padding: 14px 48px 14px 16px;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 16px;
   transition: all 0.2s;
+  background: white;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 
   &::placeholder {
-    color: #999;
+    color: #aaa;
   }
 `;
 
@@ -100,7 +204,7 @@ const InputIcon = styled.div`
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: #782221;
 `;
 
 const PasswordToggle = styled.button`
@@ -110,12 +214,12 @@ const PasswordToggle = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #999;
+  color: #782221;
   cursor: pointer;
   padding: 0;
   
   &:hover {
-    color: #667eea;
+    color: #9B2C2C;
   }
 `;
 
@@ -126,36 +230,52 @@ const CodeInputGroup = styled.div`
 
 const CodeInput = styled.input`
   flex: 1;
-  padding: 16px;
-  border: 2px solid #f0f0f0;
-  border-radius: 8px;
+  padding: 14px 16px;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 16px;
   text-align: center;
   font-weight: 600;
   letter-spacing: 2px;
+  background: white;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
+  }
+
+  &::placeholder {
+    color: #aaa;
+    letter-spacing: normal;
+    font-weight: 400;
   }
 `;
 
 const SendCodeButton = styled.button`
-  padding: 16px 24px;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  color: #667eea;
-  font-weight: 600;
+  padding: 14px 20px;
+  background: transparent;
+  border: 2px solid #2C2420;
+  border-radius: 0;
+  color: #782221;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   white-space: nowrap;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-cinzel), serif;
+  box-shadow: 3px 3px 0px 0px #2C2420;
 
   &:hover:not(:disabled) {
-    background: #667eea;
-    color: white;
-    border-color: #667eea;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px #2C2420;
   }
 
   &:disabled {
@@ -167,19 +287,29 @@ const SendCodeButton = styled.button`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  background: #782221;
+  color: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   margin-top: 8px;
+  box-shadow: 4px 4px 0px 0px #2C2420;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-family: var(--font-cinzel), serif;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #2C2420;
+    background: #9B2C2C;
+  }
+
+  &:active:not(:disabled) {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0px 0px #2C2420;
   }
 
   &:disabled {
@@ -191,36 +321,48 @@ const SubmitButton = styled.button`
 
 const LoginLink = styled.div`
   text-align: center;
-  margin-top: 24px;
-  color: #666;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(44, 36, 32, 0.15);
+  color: #5D4037;
+  font-size: 14px;
+  font-family: var(--font-dm-sans), sans-serif;
 
   a {
-    color: #667eea;
+    color: #782221;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: var(--font-cinzel), serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 12px;
+    margin-left: 4px;
+    transition: color 0.3s;
 
     &:hover {
-      text-decoration: underline;
+      color: #9B2C2C;
     }
   }
 `;
 
 const Message = styled.div<{ type: 'success' | 'error' }>`
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 0;
   margin-bottom: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  border: 2px solid #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   ${props => props.type === 'success' && `
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: rgba(85, 107, 47, 0.15);
+    color: #556B2F;
+    border-color: #556B2F;
   `}
   
   ${props => props.type === 'error' && `
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: rgba(120, 34, 33, 0.1);
+    color: #782221;
+    border-color: #782221;
   `}
 `;
 
@@ -405,18 +547,30 @@ export default function RegisterPage() {
   return (
     <Container>
       <BackButton href="/">
-        <ArrowLeft size={20} />
+        <ArrowLeft size={18} />
         返回首页
       </BackButton>
 
       <Card>
         <Header>
-          <Logo>🐾</Logo>
+          <LogoIcon>
+            <div className="logo-wrapper">
+              <Scroll size={32} />
+            </div>
+          </LogoIcon>
           <Title>注册爪爪管家</Title>
           <Subtitle>
             {step === 'email' ? '请输入邮箱并获取验证码' : '完善个人信息'}
           </Subtitle>
         </Header>
+
+        <StepIndicator>
+          <StepDot $active={step === 'email'} $completed={step === 'info'}>1</StepDot>
+          <StepLine $active={step === 'info'} />
+          <StepDot $active={step === 'info'} $completed={false}>2</StepDot>
+        </StepIndicator>
+
+        <Divider><span>{step === 'email' ? 'Email Verify' : 'Profile Setup'}</span></Divider>
 
         {message && (
           <Message type={message.type}>
@@ -427,36 +581,42 @@ export default function RegisterPage() {
         <Form onSubmit={handleSubmit}>
           {step === 'email' ? (
             <>
-              <InputGroup>
-                <Input
-                  type="email"
-                  placeholder="请输入邮箱地址"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  required
-                />
-                <InputIcon>
-                  <Mail size={20} />
-                </InputIcon>
-              </InputGroup>
+              <div>
+                <InputLabel>邮箱地址</InputLabel>
+                <InputGroup>
+                  <Input
+                    type="email"
+                    placeholder="请输入邮箱地址"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    required
+                  />
+                  <InputIcon>
+                    <Mail size={20} />
+                  </InputIcon>
+                </InputGroup>
+              </div>
 
-              <CodeInputGroup>
-                <CodeInput
-                  type="text"
-                  placeholder="验证码"
-                  maxLength={6}
-                  value={formData.verificationCode}
-                  onChange={(e) => handleInputChange('verificationCode', e.target.value.replace(/\D/g, ''))}
-                  required
-                />
-                <SendCodeButton
-                  type="button"
-                  onClick={handleSendCode}
-                  disabled={sendingCode || countdown > 0}
-                >
-                  {sendingCode ? '发送中...' : countdown > 0 ? `${countdown}s` : '获取验证码'}
-                </SendCodeButton>
-              </CodeInputGroup>
+              <div>
+                <InputLabel>验证码</InputLabel>
+                <CodeInputGroup>
+                  <CodeInput
+                    type="text"
+                    placeholder="6位验证码"
+                    maxLength={6}
+                    value={formData.verificationCode}
+                    onChange={(e) => handleInputChange('verificationCode', e.target.value.replace(/\D/g, ''))}
+                    required
+                  />
+                  <SendCodeButton
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={sendingCode || countdown > 0}
+                  >
+                    {sendingCode ? '发送中...' : countdown > 0 ? `${countdown}s` : '获取验证码'}
+                  </SendCodeButton>
+                </CodeInputGroup>
+              </div>
 
               <SubmitButton type="submit" disabled={loading}>
                 {loading ? '验证中...' : '验证邮箱'}
@@ -464,61 +624,73 @@ export default function RegisterPage() {
             </>
           ) : (
             <>
-              <InputGroup>
-                <Input
-                  type="text"
-                  placeholder="用户名（可选）"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                />
-                <InputIcon>
-                  <User size={20} />
-                </InputIcon>
-              </InputGroup>
+              <div>
+                <InputLabel>用户名（可选）</InputLabel>
+                <InputGroup>
+                  <Input
+                    type="text"
+                    placeholder="请输入用户名"
+                    value={formData.username}
+                    onChange={(e) => handleInputChange('username', e.target.value)}
+                  />
+                  <InputIcon>
+                    <User size={20} />
+                  </InputIcon>
+                </InputGroup>
+              </div>
 
-              <InputGroup>
-                <Input
-                  type="text"
-                  placeholder="真实姓名（可选）"
-                  value={formData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                />
-                <InputIcon>
-                  <User size={20} />
-                </InputIcon>
-              </InputGroup>
+              <div>
+                <InputLabel>真实姓名（可选）</InputLabel>
+                <InputGroup>
+                  <Input
+                    type="text"
+                    placeholder="请输入真实姓名"
+                    value={formData.fullName}
+                    onChange={(e) => handleInputChange('fullName', e.target.value)}
+                  />
+                  <InputIcon>
+                    <User size={20} />
+                  </InputIcon>
+                </InputGroup>
+              </div>
 
-              <InputGroup>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="设置密码（至少6位）"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  required
-                />
-                <PasswordToggle
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </PasswordToggle>
-              </InputGroup>
+              <div>
+                <InputLabel>设置密码</InputLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="密码至少6位"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    required
+                  />
+                  <PasswordToggle
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </PasswordToggle>
+                </InputGroup>
+              </div>
 
-              <InputGroup>
-                <Input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="确认密码"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  required
-                />
-                <PasswordToggle
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </PasswordToggle>
-              </InputGroup>
+              <div>
+                <InputLabel>确认密码</InputLabel>
+                <InputGroup>
+                  <Input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="请再次输入密码"
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    required
+                  />
+                  <PasswordToggle
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </PasswordToggle>
+                </InputGroup>
+              </div>
 
               <SubmitButton type="submit" disabled={loading}>
                 {loading ? '注册中...' : '完成注册'}

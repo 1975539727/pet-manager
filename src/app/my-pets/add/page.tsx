@@ -1,61 +1,71 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
-import { ArrowLeft, Camera, Save, Calendar, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Camera, Save, Calendar, ChevronDown, Weight, Upload, X } from 'lucide-react';
 import { createUserPet } from '@/lib/api/userPets';
 import { petCategories } from '@/data/petNavigation';
+import { compressImage, validateImageFile, convertImageToBase64 } from '@/lib/api/upload';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed, #fce7f3);
+  background-color: #F5F2E9;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent);
+  background-size: 50px 50px;
+  font-family: var(--font-dm-sans), sans-serif;
+  padding-top: 72px;
 `;
 
 const Header = styled.header`
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 10;
-`;
-
-const HeaderContent = styled.div`
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 1rem;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+  background: rgba(245, 242, 233, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(44, 36, 32, 0.1);
+  z-index: 100;
 `;
 
 const BackButton = styled.button`
+  background: none;
+  border: 2px solid #2C2420;
   padding: 0.5rem;
-  border: none;
-  background: transparent;
-  border-radius: 9999px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2C2420;
+  border-radius: 0;
+  transition: all 0.3s;
   
   &:hover {
-    background: #f3f4f6;
-  }
-  
-  svg {
-    color: #374151;
+    background: #782221;
+    color: #F5F2E9;
+    border-color: #782221;
   }
 `;
 
 const HeaderTitle = styled.div`
   h1 {
     font-size: 1.5rem;
-    font-weight: bold;
-    color: #ea580c;
+    font-weight: 700;
+    color: #2C2420;
+    margin: 0;
+    font-family: var(--font-playfair), serif;
   }
   
   p {
     font-size: 0.875rem;
-    color: #4b5563;
+    color: #5D4037;
+    font-family: var(--font-dm-sans), sans-serif;
   }
 `;
 
@@ -66,9 +76,10 @@ const Main = styled.main`
 `;
 
 const Form = styled.form`
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 3px solid #2C2420;
+  box-shadow: 6px 6px 0px 0px #2C2420;
   padding: 2rem;
 `;
 
@@ -84,29 +95,30 @@ const AvatarUpload = styled.div`
 
 const AvatarContainer = styled.div`
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 8rem;
+  height: 8rem;
 `;
 
 const AvatarCircle = styled.div`
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, #C5A059, #782221);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 3px solid #e5e7eb;
+  border: 3px solid #2C2420;
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: sepia(0.15) contrast(1.05);
   }
   
   svg {
-    color: #9ca3af;
+    color: #F5F2E9;
   }
 `;
 
@@ -114,23 +126,25 @@ const CameraButton = styled.label`
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 36px;
-  height: 36px;
-  background: #3b82f6;
-  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #782221;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 3px solid white;
-  transition: background 0.2s;
+  border: 2px solid #2C2420;
+  box-shadow: 2px 2px 0px 0px #2C2420;
+  transition: all 0.3s;
   
   &:hover {
-    background: #2563eb;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px #2C2420;
   }
   
   svg {
-    color: white;
+    color: #F5F2E9;
   }
   
   input {
@@ -139,13 +153,14 @@ const CameraButton = styled.label`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2C2420;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-playfair), serif;
   
   span {
     font-size: 1.5rem;
@@ -168,37 +183,42 @@ const FormField = styled.div`
   label {
     display: block;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #9ca3af;
+    font-weight: 600;
+    color: #5D4037;
     margin-bottom: 0.5rem;
+    font-family: var(--font-cinzel), serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     
     span.required {
-      color: #ef4444;
+      color: #782221;
     }
   }
 `;
 
 const GenderButtonGroup = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 0.5rem;
 `;
 
 const GenderButton = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: 1rem;
-  border: 2px solid ${props => props.$active ? '#3b82f6' : '#e5e7eb'};
-  border-radius: 0.75rem;
-  background: white;
+  border: 2px solid ${props => props.$active ? '#782221' : '#2C2420'};
+  border-radius: 0;
+  background: ${props => props.$active ? '#782221' : '#F5F2E9'};
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: ${props => props.$active ? '3px 3px 0px 0px #2C2420' : 'none'};
   
   &:hover {
-    border-color: #3b82f6;
+    background: ${props => props.$active ? '#782221' : 'rgba(120, 34, 33, 0.05)'};
+    border-color: #782221;
   }
   
   .icon {
@@ -207,8 +227,9 @@ const GenderButton = styled.button<{ $active: boolean }>`
   
   .label {
     font-size: 0.875rem;
-    color: #374151;
-    font-weight: 500;
+    color: ${props => props.$active ? '#F5F2E9' : '#2C2420'};
+    font-weight: 600;
+    font-family: var(--font-dm-sans), sans-serif;
   }
 `;
 
@@ -217,10 +238,11 @@ const ToggleField = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
-  background: white;
+  border: 2px solid #2C2420;
+  border-radius: 0;
+  background: #F5F2E9;
   margin-bottom: 1.5rem;
+  box-shadow: 3px 3px 0px 0px #2C2420;
 `;
 
 const ToggleInfo = styled.div`
@@ -231,26 +253,30 @@ const ToggleInfo = styled.div`
   .icon {
     width: 2.5rem;
     height: 2.5rem;
-    background: #f3f4f6;
-    border-radius: 50%;
+    background: linear-gradient(135deg, #782221, #9B2C2C);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
+    border: 2px solid #2C2420;
+    box-shadow: 2px 2px 0px 0px #2C2420;
   }
   
   .text {
     h3 {
       font-size: 1rem;
-      font-weight: 600;
-      color: #1f2937;
+      font-weight: 700;
+      color: #2C2420;
       margin: 0;
+      font-family: var(--font-playfair), serif;
     }
     
     p {
       font-size: 0.75rem;
-      color: #9ca3af;
+      color: #5D4037;
       margin: 0.25rem 0 0 0;
+      font-family: var(--font-dm-sans), sans-serif;
     }
   }
 `;
@@ -273,29 +299,32 @@ const ToggleSwitch = styled.label`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #e5e7eb;
+    background-color: rgba(44, 36, 32, 0.2);
     transition: 0.3s;
-    border-radius: 2rem;
+    border-radius: 0;
+    border: 2px solid #2C2420;
     
     &:before {
       position: absolute;
       content: "";
-      height: 1.5rem;
-      width: 1.5rem;
-      left: 0.25rem;
-      bottom: 0.25rem;
-      background-color: white;
+      height: 1.25rem;
+      width: 1.25rem;
+      left: 0.2rem;
+      bottom: 0.15rem;
+      background-color: #F5F2E9;
       transition: 0.3s;
-      border-radius: 50%;
+      border-radius: 0;
+      border: 1px solid #2C2420;
     }
   }
   
   input:checked + .slider {
-    background-color: #3b82f6;
+    background-color: #782221;
   }
   
   input:checked + .slider:before {
-    transform: translateX(1.5rem);
+    transform: translateX(1.35rem);
+    background-color: #F5F2E9;
   }
 `;
 
@@ -305,19 +334,22 @@ const DatePickerField = styled.div`
   input {
     width: 100%;
     padding: 1rem 3rem 1rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.75rem;
+    border: 2px solid #2C2420;
+    border-radius: 0;
     font-size: 1rem;
-    color: #1f2937;
+    color: #2C2420;
     cursor: pointer;
+    background: #F5F2E9;
+    font-family: var(--font-dm-sans), sans-serif;
     
     &::placeholder {
-      color: #9ca3af;
+      color: #5D4037;
     }
     
     &:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #782221;
+      box-shadow: 3px 3px 0px 0px #782221;
     }
   }
   
@@ -326,17 +358,18 @@ const DatePickerField = styled.div`
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #fbbf24;
+    color: #C5A059;
     pointer-events: none;
   }
 `;
 
 const WeightSection = styled.div`
-  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
+  background: #F5F2E9;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  box-shadow: 3px 3px 0px 0px #2C2420;
 `;
 
 const WeightHeader = styled.div`
@@ -346,14 +379,15 @@ const WeightHeader = styled.div`
   margin-bottom: 1rem;
   
   .icon {
-    color: #a855f7;
+    color: #782221;
   }
   
   h3 {
     font-size: 1rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-weight: 700;
+    color: #2C2420;
     margin: 0;
+    font-family: var(--font-playfair), serif;
   }
 `;
 
@@ -363,16 +397,19 @@ const WeightInputWrapper = styled.div`
   input {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.75rem;
+    border: 2px solid #2C2420;
+    border-radius: 0;
     font-size: 1.5rem;
     font-weight: 600;
     text-align: center;
-    background: white;
+    background: #F5F2E9;
+    color: #2C2420;
+    font-family: var(--font-dm-sans), sans-serif;
     
     &:focus {
       outline: none;
-      border-color: #a855f7;
+      border-color: #782221;
+      box-shadow: 3px 3px 0px 0px #782221;
     }
   }
   
@@ -384,44 +421,52 @@ const WeightInputWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    color: #9ca3af;
+    color: #5D4037;
     font-size: 1rem;
     cursor: pointer;
+    font-family: var(--font-cinzel), serif;
   }
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  background: #F5F2E9;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: #5D4037;
   }
 `;
 
 const Select = styled.select`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   appearance: none;
-  background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 1rem center;
+  background: #F5F2E9 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%232C2420" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 1rem center;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -437,20 +482,19 @@ const WeightInputGroup = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  border: 2px solid #2C2420;
+  border-radius: 0;
   font-size: 1rem;
   resize: vertical;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  background: #F5F2E9;
+  color: #2C2420;
+  font-family: var(--font-dm-sans), sans-serif;
   
   &:focus {
     outline: none;
-    ring: 2px solid #f97316;
-    border-color: transparent;
-  }
-  
-  &::placeholder {
-    color: #9ca3af;
+    border-color: #782221;
+    box-shadow: 3px 3px 0px 0px #782221;
   }
 `;
 
@@ -464,42 +508,47 @@ const CheckboxLabel = styled.label`
   input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
-    color: #f97316;
-    border: 1px solid #d1d5db;
-    border-radius: 0.25rem;
+    accent-color: #782221;
+    border: 2px solid #2C2420;
+    border-radius: 0;
     cursor: pointer;
   }
   
   span {
     font-size: 0.875rem;
-    color: #374151;
+    color: #2C2420;
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
+  margin-top: 0.5rem;
 `;
 
 const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   flex: 1;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
   
   ${props => props.$variant === 'primary' ? `
-    background: #f97316;
-    color: white;
-    border: none;
+    background: #782221;
+    color: #F5F2E9;
+    border: 2px solid #2C2420;
+    box-shadow: 3px 3px 0px 0px #2C2420;
     
     &:hover:not(:disabled) {
-      background: #ea580c;
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px 0px #2C2420;
     }
     
     &:disabled {
@@ -507,20 +556,121 @@ const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
       cursor: not-allowed;
     }
   ` : `
-    background: white;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: transparent;
+    color: #2C2420;
+    border: 2px solid #2C2420;
     
     &:hover {
-      background: #f9fafb;
+      background: rgba(44, 36, 32, 0.05);
     }
   `}
+`;
+
+const AvatarSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #F5F2E9;
+  border-radius: 0;
+  border: 2px solid #2C2420;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+`;
+
+const AvatarImageWrapper = styled.div<{ $hasImage: boolean }>`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid #2C2420;
+  background: ${props => props.$hasImage ? 'transparent' : 'linear-gradient(135deg, #C5A059, #782221)'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(0.15) contrast(1.05);
+  }
+  
+  svg {
+    color: #F5F2E9;
+  }
+`;
+
+const AvatarUploadButton = styled.button`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0;
+  background: #782221;
+  border: 2px solid #2C2420;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 2px 2px 0px 0px #2C2420;
+  
+  &:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px #2C2420;
+  }
+  
+  svg {
+    color: #F5F2E9;
+  }
+`;
+
+const RemoveAvatarButton = styled.button`
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0;
+  background: #2C2420;
+  border: 2px solid #2C2420;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    background: #782221;
+    border-color: #782221;
+  }
+  
+  svg {
+    color: #F5F2E9;
+  }
+`;
+
+const AvatarHint = styled.p`
+  font-size: 0.75rem;
+  color: #5D4037;
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
 `;
 
 export default function AddPetPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     birth_date: '',
@@ -538,14 +688,32 @@ export default function AddPetPage() {
   const selectedCategoryData = petCategories.find(cat => cat.id === formData.category);
   const availableBreeds = selectedCategoryData?.breeds || [];
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // 验证文件（限制2MB，因为Base64会增大文件大小）
+    const validation = validateImageFile(file, 2 * 1024 * 1024);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+
+    setAvatarFile(file);
+    
+    // 预览图片
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarUrl(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl('');
+    setAvatarFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -556,12 +724,34 @@ export default function AddPetPage() {
     try {
       const user = localStorage.getItem('user');
       if (!user) {
-        router.push('/login');
+        router.push('/auth/login');
         return;
       }
 
       const userData = JSON.parse(user);
       
+      let processedAvatarUrl = avatarUrl;
+      
+      // 如果有新上传的文件，转换为Base64编码
+      if (avatarFile) {
+        setUploading(true);
+        try {
+          // 压缩图片
+          const compressedFile = await compressImage(avatarFile, 600, 600, 0.7);
+          // 转换为Base64编码（直接存储在数据库中）
+          const base64String = await convertImageToBase64(compressedFile);
+          processedAvatarUrl = base64String;
+        } catch (error) {
+          console.error('图片处理错误:', error);
+          alert('图片处理失败');
+          setLoading(false);
+          setUploading(false);
+          return;
+        } finally {
+          setUploading(false);
+        }
+      }
+
       const petData = {
         user_id: userData.id,
         name: formData.name,
@@ -572,6 +762,7 @@ export default function AddPetPage() {
         weight_unit: 'kg' as const,
         status: 'active' as const,
         is_neutered: formData.is_neutered,
+        avatar_url: processedAvatarUrl || undefined,
         notes: JSON.stringify({
           category: formData.category
         })
@@ -596,19 +787,55 @@ export default function AddPetPage() {
   return (
     <PageContainer>
       <Header>
-        <HeaderContent>
-          <BackButton onClick={() => router.back()}>
-            <ArrowLeft size={24} />
-          </BackButton>
-          <HeaderTitle>
-            <h1>创建宠物档案</h1>
-            <p>让我们了解一下你的小伙伴吧!</p>
-          </HeaderTitle>
-        </HeaderContent>
+        <BackButton onClick={() => router.back()}>
+          <ArrowLeft size={24} />
+        </BackButton>
+        <HeaderTitle>
+          <h1>创建宠物档案</h1>
+          <p>让我们了解一下你的小伙伴吧!</p>
+        </HeaderTitle>
       </Header>
 
       <Main>
         <Form onSubmit={handleSubmit}>
+          {/* 头像上传区域 */}
+          <AvatarSection>
+            <AvatarContainer>
+              <AvatarImageWrapper $hasImage={!!avatarUrl}>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="宠物头像" />
+                ) : (
+                  <Camera size={48} />
+                )}
+              </AvatarImageWrapper>
+              <AvatarUploadButton
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                <Upload size={18} />
+              </AvatarUploadButton>
+              {avatarUrl && (
+                <RemoveAvatarButton
+                  type="button"
+                  onClick={handleRemoveAvatar}
+                  disabled={uploading}
+                >
+                  <X size={16} />
+                </RemoveAvatarButton>
+              )}
+            </AvatarContainer>
+            <AvatarHint>
+              {uploading ? '处理中...' : '点击上传宠物照片（支持 JPG、PNG、GIF、WebP，最大2MB）'}
+            </AvatarHint>
+            <HiddenInput
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+              onChange={handleFileSelect}
+            />
+          </AvatarSection>
+
           {/* 宠物昵称 */}
           <FormField>
             <label>宠物昵称</label>
@@ -716,7 +943,7 @@ export default function AddPetPage() {
           {/* 体重档案 */}
           <WeightSection>
             <WeightHeader>
-              <Camera className="icon" size={20} />
+              <Weight className="icon" size={20} />
               <h3>体重档案</h3>
             </WeightHeader>
             <WeightInputWrapper>
@@ -734,12 +961,12 @@ export default function AddPetPage() {
           </WeightSection>
 
           <ButtonGroup>
-            <Button type="button" onClick={() => router.back()}>
+            <Button type="button" onClick={() => router.back()} disabled={loading || uploading}>
               取消
             </Button>
-            <Button type="submit" disabled={loading} $variant="primary">
+            <Button type="submit" disabled={loading || uploading} $variant="primary">
               <Save size={20} />
-              {loading ? '保存中...' : '保存'}
+              {uploading ? '上传中...' : loading ? '保存中...' : '保存'}
             </Button>
           </ButtonGroup>
         </Form>

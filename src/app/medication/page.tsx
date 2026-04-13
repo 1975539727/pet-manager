@@ -9,6 +9,7 @@ import { UserPet } from '@/lib/supabase';
 
 const PageContainer = styled.div`
   min-height: 100vh;
+  padding-top: 96px;
   background-color: #F5F2E9;
   background-image:
     linear-gradient(0deg, transparent 24%, rgba(120, 34, 33, .03) 25%, rgba(120, 34, 33, .03) 26%, transparent 27%, transparent 74%, rgba(120, 34, 33, .03) 75%, rgba(120, 34, 33, .03) 76%, transparent 77%, transparent),
@@ -165,7 +166,7 @@ export default function MedicationPage() {
       const userData = JSON.parse(user);
       loadPets(userData.id);
     } else {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [router]);
 
