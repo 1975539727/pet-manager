@@ -346,3 +346,34 @@ export interface AnimalKnowledge {
   created_at?: string;
   updated_at?: string;
 }
+
+// 贴纸生成记录接口
+export interface StickerRecord {
+  id: string;
+  user_id: string;
+  template_id?: string;
+  template_name: string;
+  prompt?: string;
+  status: 'pending' | 'generating' | 'completed' | 'failed';
+  image_url?: string;
+  task_id?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// 用药计划接口
+export interface PetMedication {
+  id: string;
+  pet_id: string;
+  medication_name: string;       // 用药名称
+  dosage?: number;               // 剂量（可选）
+  dosage_unit?: string;          // 剂量单位（可选）
+  start_date: string;            // 开始日期
+  reminder_time?: string;        // 提醒时间
+  repeat_type: 'none' | 'daily' | 'weekly' | 'monthly';  // 重复设置
+  notes?: string;                // 备注（可选）
+  is_completed: boolean;         // 是否完成
+  completed_at?: string;         // 完成时间
+  created_at?: string;
+  updated_at?: string;
+}

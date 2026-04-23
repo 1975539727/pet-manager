@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Heart, Share, BookOpen, FileText, Bot, User, Home, Zap, Utensils, Search, X } from 'lucide-react';
+import { ArrowLeft, Heart, Share, BookOpen, FileText, User, Home, Zap, Utensils, Search, X } from 'lucide-react';
 import styled from 'styled-components';
 import { getPetFullInfo } from '@/lib/api/pets';
 import { FullPetInfo } from '@/lib/supabase';
@@ -696,39 +696,6 @@ export default function PetDetailPage() {
             </SectionContent>
           </Section>
 
-          <Section>
-            <SectionHeader>
-              <SectionIcon>
-                <Bot size={20} />
-              </SectionIcon>
-              <SectionTitle>智能助手</SectionTitle>
-            </SectionHeader>
-            <SectionContent>
-              <p>我们的AI助手随时为您解答关于{petInfo.name}的任何问题：</p>
-              <ul>
-                {petInfo.training_commands && petInfo.training_commands.length > 0 ? (
-                  petInfo.training_commands.slice(0, 5).map((cmd, index) => (
-                    <li key={index}>
-                      {cmd.command_name} - {cmd.description || '基础训练指令'}
-                      {cmd.difficulty_level && ` (难度: ${cmd.difficulty_level}/5)`}
-                    </li>
-                  ))
-                ) : (
-                  <>
-                    <li>个性化饲养建议</li>
-                    <li>健康问题咨询</li>
-                    <li>行为问题解答</li>
-                    <li>训练技巧指导</li>
-                    <li>紧急情况处理</li>
-                  </>
-                )}
-              </ul>
-              <SectionButton>
-                <Bot size={18} />
-                开始咨询
-              </SectionButton>
-            </SectionContent>
-          </Section>
         </SectionGrid>
       </MainContent>
 

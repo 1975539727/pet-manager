@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Plus, Edit, Trash2, MoreVertical, Hourglass, Utensils, Search, X, Lightbulb, AlertTriangle } from 'lucide-react';
 import { getUserPets, deleteUserPet } from '@/lib/api/userPets';
 import { UserPet } from '@/lib/supabase';
-import { chatStream } from '@/llm/chatStream';
+import { chatNonStream } from '@/llm/chatStream';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -332,40 +332,27 @@ const InfoCard = styled.div<{ $color?: string }>`
 
 const CardFooter = styled.div`
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 2px solid rgba(44, 36, 32, 0.1);
   display: flex;
   gap: 0.75rem;
   justify-content: center;
 `;
 
-const TagButton = styled.button<{ $variant?: 'default' | 'primary' }>`
-  display: flex;
+const NeuterTag = styled.div<{ $neutered?: boolean }>`
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  border: none;
-  cursor: pointer;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0;
+  border: 2px solid #2C2420;
   font-size: 0.875rem;
-  transition: all 0.2s;
-  
-  ${props => props.$variant === 'primary' ? `
-    background: white;
-    color: #f97316;
-    border: 1px solid #e5e7eb;
-    
-    &:hover {
-      background: #fff7ed;
-    }
-  ` : `
-    background: white;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
-    
-    &:hover {
-      background: #f9fafb;
-    }
-  `}
+  font-weight: 600;
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.05em;
+  box-shadow: 3px 3px 0px 0px #2C2420;
+  transition: all 0.3s;
+  background: ${props => props.$neutered ? '#556B2F' : 'rgba(255, 255, 255, 0.5)'};
+  color: ${props => props.$neutered ? '#F5F2E9' : '#2C2420'};
 `;
 
 
@@ -779,7 +766,6 @@ export default function MyPetsPage() {
   const [queryResult, setQueryResult] = useState<string>('');
   const [showResult, setShowResult] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const queryContentRef = useRef('');
 
   useEffect(() => {
     // 从本地存储获取用户ID
@@ -884,7 +870,6 @@ export default function MyPetsPage() {
 
     setIsQuerying(true);
     setQueryResult('');
-    queryContentRef.current = '';
 
     const prompt = generateDietPrompt(
       selectedPet.name,
@@ -897,27 +882,18 @@ export default function MyPetsPage() {
       { role: 'user' as const, content: `请分析${selectedPet.name}是否可以吃${foodInput.trim()}` }
     ];
 
-    await chatStream(
-      messages,
-      (chunk: string) => {
-        queryContentRef.current += chunk;
-      },
-      () => {
-        const finalContent = queryContentRef.current;
-        if (finalContent) {
-          setQueryResult(finalContent);
-          setShowResult(true);
-        }
-        setIsQuerying(false);
-        queryContentRef.current = '';
-      },
-      (error: Error) => {
-        console.error('查询错误:', error);
-        setQueryResult('查询失败，请稍后重试');
-        setIsQuerying(false);
-        queryContentRef.current = '';
+    try {
+      const response = await chatNonStream(messages);
+      if (response.content) {
+        setQueryResult(response.content);
+        setShowResult(true);
       }
-    );
+    } catch (error) {
+      console.error('查询错误:', error);
+      setQueryResult('查询失败，请稍后重试');
+    } finally {
+      setIsQuerying(false);
+    }
   };
 
   // 关闭弹窗时重置状态
@@ -1042,11 +1018,10 @@ export default function MyPetsPage() {
           </CardBody>
 
           <CardFooter>
-            <TagButton $variant="primary">⭐ 水晶盘</TagButton>
             {selectedPet.is_neutered ? (
-              <TagButton>✅ 已绝育</TagButton>
+              <NeuterTag $neutered>已绝育</NeuterTag>
             ) : (
-              <TagButton>⚪ 未绝育</TagButton>
+              <NeuterTag>未绝育</NeuterTag>
             )}
           </CardFooter>
         </PetDetailCard>
@@ -1102,7 +1077,10 @@ export default function MyPetsPage() {
                 <div className="action-button">去看看 ›</div>
               </DiscoverCard>
               
-              <DiscoverCard $bgColor="rgba(120, 34, 33, 0.1)">
+              <DiscoverCard 
+                $bgColor="rgba(120, 34, 33, 0.1)"
+                onClick={() => router.push('/pet-sticker')}
+              >
                 <div className="icon-wrapper">💬</div>
                 <div className="title">萌宠贴纸</div>
                 <div className="subtitle">记录可爱瞬间</div>
